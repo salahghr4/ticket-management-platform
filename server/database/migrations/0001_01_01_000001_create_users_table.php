@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('role', ['admin', 'employee', 'manager', 'technician'])->default('employee');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->foreignId('department_id')->constrained();
+            $table->foreignId('department_id')->nullable()->constrained();
             $table->rememberToken();
             $table->timestamps();
         });
