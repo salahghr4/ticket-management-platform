@@ -16,15 +16,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/useAuth";
 import { type Login, loginSchema } from "@/validation/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const form = useForm<Login>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -33,8 +37,20 @@ const Login = () => {
     },
   });
 
-  const onSubmit = (data: Login) => {
-    console.log(data);
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const redirectUrl = location.state?.redirectUrl || "/dashboard";
+
+  const onSubmit = async ({ email, password }: Login) => {
+    setIsLoading(true);
+    const { success, error } = await login(email, password);
+    if (success) {
+      navigate(redirectUrl, { replace: true });
+    } else {
+      setError(error);
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -48,6 +64,7 @@ const Login = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {error && <p className="text-red-500 text-center mb-5">{error}</p>}
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -102,8 +119,9 @@ const Login = () => {
             <Button
               type="submit"
               className="w-full cursor-pointer"
+              disabled={isLoading}
             >
-              Login
+              {isLoading ? <Loader2 className="animate-spin" /> : "Login"}
             </Button>
           </form>
         </Form>
