@@ -1,13 +1,5 @@
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   Form,
   FormControl,
   FormField,
@@ -22,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -54,90 +46,71 @@ const Login = () => {
   };
 
   return (
-    <Card className="w-3/5 rounded-xl shadow-none">
-      <CardHeader>
-        <CardTitle className="text-3xl font-bold">
-          Login to your account
-        </CardTitle>
-        <CardDescription>
+    <div className="flex flex-col gap-10 -mt-10">
+      <div className="flex flex-col items-center gap-2 text-center">
+        <h1 className="text-2xl font-bold">Login to your account</h1>
+        <p className="text-balance text-sm text-muted-foreground">
           Enter your email below to login to your account
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {error && <p className="text-red-500 text-center mb-5">{error}</p>}
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-7"
-          >
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
+        </p>
+      </div>
+      {error && <p className="text-red-500 text-center mb-5">{error}</p>}
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-7"
+        >
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="m@example.com"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <div className="relative">
                     <Input
-                      placeholder="m@example.com"
                       {...field}
+                      type={showPassword ? "text" : "password"}
+                      className="pr-10"
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        {...field}
-                        type={showPassword ? "text" : "password"}
-                        className="pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground cursor-pointer"
-                      >
-                        {showPassword ? (
-                          <Eye size={20} />
-                        ) : (
-                          <EyeOff size={20} />
-                        )}
-                      </button>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button
-              type="submit"
-              className="w-full cursor-pointer"
-              disabled={isLoading}
-            >
-              {isLoading ? <Loader2 className="animate-spin" /> : "Login"}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-      <CardFooter className="flex flex-col gap-y-4">
-        <div className="text-sm text-center">
-          Don't have an account?{" "}
-          <Link
-            to="/register"
-            className="text-primary font-medium underline"
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground cursor-pointer"
+                    >
+                      {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                    </button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button
+            type="submit"
+            className="w-full cursor-pointer"
+            disabled={isLoading}
           >
-            Register
-          </Link>
-        </div>
-      </CardFooter>
-    </Card>
+            {isLoading ? <Loader2 className="animate-spin" /> : "Login"}
+          </Button>
+        </form>
+      </Form>
+    </div>
   );
 };
 

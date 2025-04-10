@@ -4,27 +4,27 @@ import { Outlet } from "react-router-dom";
 
 const AuthLayout = () => {
   return (
-    <div className="w-full h-full flex items-center p-5">
-      <div className="w-full h-full flex flex-col gap-15">
-        <div className="w-full h-full flex justify-center items-center">
+    <div className="grid min-h-svh lg:grid-cols-2">
+      <div className="flex flex-col gap-4 p-6 md:p-10">
+        <div className="flex justify-center gap-2 md:justify-start">
           <img
             src={noBgBlack}
             alt=""
-            className="w-1/3"
+            className="w-1/4"
           />
         </div>
-        <div className="w-full px-10 flex justify-center flex-1">
-          <Outlet />
+        <div className="flex flex-1 items-center justify-center">
+          <div className="w-full max-w-xs">
+            <Outlet />
+          </div>
         </div>
       </div>
-      <div className="hidden lg:flex w-full h-full py-10">
-        <div className="w-full h-full flex justify-center items-center">
-          <img
-            src={authImg}
-            alt=""
-            className="w-[80%] h-full object-cover rounded-4xl"
-          />
-        </div>
+      <div className="relative hidden bg-muted lg:block">
+        <img
+          src={authImg}
+          alt="Image"
+          className="absolute inset-0 h-full w-full object-cover brightness-80"
+        />
       </div>
     </div>
   );
