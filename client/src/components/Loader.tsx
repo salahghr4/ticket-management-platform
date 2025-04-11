@@ -7,6 +7,7 @@ const Loader = () => {
         src={logoBlack}
         alt=""
         className="w-10 animate-spin"
+        style={{ animationDuration: ".5s" }}
       />
     </div>
   );

@@ -36,6 +36,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = async () => {
+    setIsLoading(true);
     try {
       await authService.deauthenticateUser();
     } catch (error) {
@@ -45,6 +46,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       storage.remove("token");
       setUser(null);
       setToken(null);
+      setIsLoading(false);
     }
   };
 

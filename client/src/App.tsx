@@ -5,7 +5,7 @@ import AuthLayout from "@/layouts/AuthLayout";
 import Login from "@/pages/Login";
 import PrivateRoutes from "@/routes/PrivateRoutes";
 import PublicRoutes from "@/routes/PublicRoutes";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 
 function App() {
@@ -19,16 +19,19 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<AuthLayout />}>
-            <Route element={<PublicRoutes />}>
-              <Route path="/login" element={<Login />} />
-            </Route>
+          <Route element={<PublicRoutes />}>
+            <Route path="/login" element={<Login />} />
           </Route>
-          <Route element={<PrivateRoutes />}>
-            <Route element={<AppLayout />}>
-              <Route path="/dashboard" element={<h1>DASHBOARD</h1>} />
-            </Route>
+        </Route>
+        <Route element={<PrivateRoutes />}>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/dashboard" element={<h1>DASHBOARD</h1>} />
+            <Route path="/tickets" element={<h1>TICKETS</h1>} />
+            <Route path="/users" element={<h1>USERS</h1>} />
           </Route>
-        </Routes>
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 }

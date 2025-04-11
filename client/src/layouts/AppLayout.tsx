@@ -1,12 +1,17 @@
+import AppHeader from "@/components/AppHeader";
+import AppSidebar from "@/components/AppSidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Outlet } from "react-router-dom";
 
 const AppLayout = () => {
   return (
-    <div className="min-h-svh bg-background">
-      <main className="flex flex-col gap-4">
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <AppHeader />
         <Outlet />
-      </main>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 };
 
