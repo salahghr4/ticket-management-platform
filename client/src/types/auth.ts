@@ -8,6 +8,7 @@ export type AuthContextType = {
     password: string
   ) => Promise<{ success: boolean; error: string | null }>;
   logout: () => Promise<void>;
+  isLoading: boolean;
 };
 
 export type User = {

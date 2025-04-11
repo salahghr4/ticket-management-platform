@@ -25,7 +25,7 @@ const api = async <T>(cfg: AxiosRequestConfig) => {
     if (error instanceof AxiosError && error.response) {
       return error.response.data as T;
     }
-    return { message: "An unknown error occurred" } as T;
+    return { message: "An unknown error occurred, please try again later" } as T;
   }
 };
 

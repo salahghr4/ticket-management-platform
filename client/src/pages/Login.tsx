@@ -53,12 +53,12 @@ const Login = () => {
           Enter your email below to login to your account
         </p>
       </div>
-      {error && <p className="text-red-500 text-center mb-5">{error}</p>}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-7"
-        >
+          >
+          {error && <p className="text-red-500 text-center text-sm">{error}</p>}
           <FormField
             control={form.control}
             name="email"
