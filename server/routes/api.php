@@ -17,6 +17,7 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
+    Route::get('tickets/stats', [TicketController::class, 'stats'])->name('tickets.stats');
     Route::apiResource('tickets', TicketController::class);
     Route::apiResource('users', UserController::class);
 });

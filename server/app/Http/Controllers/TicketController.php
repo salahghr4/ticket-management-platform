@@ -39,4 +39,19 @@ class TicketController extends Controller
 
         return response()->json(['message' => 'Ticket created successfully', 'ticket' => $ticket], 201);
     }
+
+    public function stats()
+    {
+        $openTickets = Ticket::where('status', 'pending')->count();
+        $inProgressTickets = Ticket::where('status', 'in_progress')->count();
+        $resolvedTickets = Ticket::where('status', 'resolved')->count();
+        $rejectedTickets = Ticket::where('status', 'rejected')->count();
+
+        return response()->json([
+            'openTickets' => $openTickets,
+            'inProgressTickets' => $inProgressTickets,
+            'resolvedTickets' => $resolvedTickets,
+            'rejectedTickets' => $rejectedTickets
+        ]);
+    }
 }

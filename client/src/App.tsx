@@ -2,6 +2,7 @@ import Loader from "@/components/Loader";
 import { useAuth } from "@/hooks/useAuth";
 import AppLayout from "@/layouts/AppLayout";
 import AuthLayout from "@/layouts/AuthLayout";
+import Dashboard from "@/pages/Dashboard";
 import Login from "@/pages/Login";
 import PrivateRoutes from "@/routes/PrivateRoutes";
 import PublicRoutes from "@/routes/PublicRoutes";
@@ -26,7 +27,7 @@ function App() {
         <Route element={<PrivateRoutes />}>
           <Route element={<AppLayout />}>
             <Route path="/" element={<Navigate to="/dashboard" />} />
-            <Route path="/dashboard" element={<h1>DASHBOARD</h1>} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/tickets" element={<h1>TICKETS</h1>} />
             <Route path="/users" element={<h1>USERS</h1>} />
           </Route>
