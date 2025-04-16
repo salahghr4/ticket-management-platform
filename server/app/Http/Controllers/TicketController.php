@@ -55,11 +55,15 @@ class TicketController extends Controller
             ->get();
 
         return response()->json([
+            'totalTickets' => Ticket::count(),
             'openTickets' => $openTickets,
             'inProgressTickets' => $inProgressTickets,
             'resolvedTickets' => $resolvedTickets,
             'rejectedTickets' => $rejectedTickets,
-            'ticketCounts' => $ticketCounts
+            'ticketCounts' => $ticketCounts,
+            'highestPriority' => Ticket::where('priority', 'high')->count(),
+            'mediumPriority' => Ticket::where('priority', 'medium')->count(),
+            'lowPriority' => Ticket::where('priority', 'low')->count(),
         ]);
 
     }

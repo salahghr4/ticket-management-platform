@@ -10,6 +10,10 @@ import { TicketStats } from "@/types/tickets";
 export function SectionCards({ ticketStats }: { ticketStats: TicketStats }) {
   const cardData = [
     {
+      title: "Total tickets",
+      value: ticketStats.totalTickets,
+    },
+    {
       title: "Open tickets",
       value: ticketStats.openTickets,
     },
@@ -28,7 +32,7 @@ export function SectionCards({ ticketStats }: { ticketStats: TicketStats }) {
   ];
 
   return (
-    <div className="*:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4 grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card lg:px-6">
+    <div className="*:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-5 grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card lg:px-6">
       {cardData.map((card) => (
         <div
           className="relative"

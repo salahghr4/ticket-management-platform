@@ -27,11 +27,10 @@ import { TicketStats } from "@/types/tickets";
 const chartConfig = {
   tickets: {
     label: "Total Tickets",
-    color: "var(--chart-1)",
   },
   count: {
     label: "Count",
-    color: "var(--chart-0)",
+    color: "var(--primary)",
   },
 } satisfies ChartConfig;
 
@@ -63,12 +62,12 @@ export function TicketChart({
     return date >= startDate;
   });
   return (
-    <Card className="@container/card">
+    <Card className="@container/card flex-1">
       <CardHeader className="relative">
         <CardTitle>Total Tickets</CardTitle>
         <CardDescription>
           <span className="@[540px]/card:block hidden">
-            Total for the last 3 months
+            Total tickets created for the last 3 months
           </span>
           <span className="@[540px]/card:hidden">Last 3 months</span>
         </CardDescription>

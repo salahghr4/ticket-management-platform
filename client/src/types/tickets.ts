@@ -16,9 +16,13 @@ export type Ticket = {
 }
 
 export type TicketStats = {
+  totalTickets: number;
   openTickets: number;
   inProgressTickets: number;
   resolvedTickets: number;
   rejectedTickets: number;
   ticketCounts: { date: string; count: number }[];
+  highestPriority: number;
+  mediumPriority: number;
+  lowPriority: number;
 };
