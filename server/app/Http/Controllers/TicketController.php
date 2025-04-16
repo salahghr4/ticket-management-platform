@@ -47,11 +47,20 @@ class TicketController extends Controller
         $resolvedTickets = Ticket::where('status', 'resolved')->count();
         $rejectedTickets = Ticket::where('status', 'rejected')->count();
 
+        // get the how many ticket created every day for the last 3 months
+        $ticketCounts = Ticket::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->where('created_at', '>=', now()->subMonths(3))
+            ->groupBy('date')
+            ->orderBy('date', 'asc')
+            ->get();
+
         return response()->json([
             'openTickets' => $openTickets,
             'inProgressTickets' => $inProgressTickets,
             'resolvedTickets' => $resolvedTickets,
-            'rejectedTickets' => $rejectedTickets
+            'rejectedTickets' => $rejectedTickets,
+            'ticketCounts' => $ticketCounts
         ]);
+
     }
 }

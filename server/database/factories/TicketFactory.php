@@ -30,6 +30,7 @@ class TicketFactory extends Factory
             'department_id' => Department::inRandomOrder()->first()->id ?? Department::factory(),
             'assigned_to' => User::inRandomOrder()->first()->id ?? User::factory(),
             'due_date' => $this->faker->dateTimeBetween('now', '+1 month'),
+            'created_at' => $this->faker->dateTimeBetween('-4 months', 'now'),
         ];
     }
 }

@@ -20,5 +20,5 @@ export type TicketStats = {
   inProgressTickets: number;
   resolvedTickets: number;
   rejectedTickets: number;
-}
-
+  ticketCounts: { date: string; count: number }[];
+};
