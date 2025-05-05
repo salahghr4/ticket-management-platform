@@ -64,6 +64,7 @@ class TicketController extends Controller
             'highestPriority' => Ticket::where('priority', 'high')->count(),
             'mediumPriority' => Ticket::where('priority', 'medium')->count(),
             'lowPriority' => Ticket::where('priority', 'low')->count(),
+            'tickets' => Ticket::with(['user:id,name,email', 'assignee:id,name,email'])->latest()->limit(8)->get()
         ]);
 
     }

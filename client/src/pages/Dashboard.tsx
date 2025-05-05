@@ -6,6 +6,8 @@ import ticketsService from "@/services/tickets";
 import { fillMissingDates } from "@/lib/utils";
 import { TicketChart } from "@/components/TicketChart";
 import { TicketPriorityChart } from "@/components/TicketPriorityChart";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import DataTable from "@/components/DataTable";
 
 const Dashboard = () => {
   const [ticketStats, setTicketStats] = useState<TicketStats>({
@@ -18,6 +20,7 @@ const Dashboard = () => {
     highestPriority: 0,
     mediumPriority: 0,
     lowPriority: 0,
+    tickets: [],
   });
 
   useEffect(() => {
@@ -43,6 +46,16 @@ const Dashboard = () => {
               lowPriority={ticketStats.lowPriority}
             />
           </div>
+          <div className="flex flex-col gap-4 px-4 lg:px-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Tickets</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <DataTable data={ticketStats.tickets} />
+                </CardContent>
+              </Card>
+            </div>
         </div>
       </div>
     </div>

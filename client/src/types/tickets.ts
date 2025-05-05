@@ -13,6 +13,7 @@ export type Ticket = {
   created_at: Date;
   updated_at: Date;
   user: User;
+  assignee: User;
 }
 
 export type TicketStats = {
@@ -25,4 +26,5 @@ export type TicketStats = {
   highestPriority: number;
   mediumPriority: number;
   lowPriority: number;
+  tickets: Ticket[]
 };
