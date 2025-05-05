@@ -16,4 +16,11 @@ const deauthenticateUser = async () => {
   });
 };
 
-export default { authenticateUser, deauthenticateUser };
+const getMe = async () => {
+  return await api<LoginResponse>({
+    method: "GET",
+    url: "/me",
+  });
+};
+
+export default { authenticateUser, deauthenticateUser,  getMe};

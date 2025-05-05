@@ -1,5 +1,5 @@
 import { AuthContextType, User } from "@/types/auth";
-import { createContext, useState, useLayoutEffect } from "react";
+import { createContext, useState, useLayoutEffect, useEffect } from "react";
 import authService from "@/services/auth";
 import storage from "@/lib/storage";
 
@@ -19,6 +19,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     setIsLoading(false);
   }, [token]);
+
+  useEffect(() => {
+    const getUser = async () => {
+      if (token) {
+        const response = await authService.getMe();
+        if (response.message === "Unauthenticated.") {
+          logout();
+        }
+        setUser(user);
+      }
+    };
+    getUser();
+  }, [user, token]);
 
   const login = async (email: string, password: string) => {
     const response = await authService.authenticateUser(email, password);
