@@ -30,14 +30,14 @@ export function TicketPriorityChart({
       {
         priority: "high",
         tickets: highestPriority,
-        fill: "var(--color-high)",
+        fill: "var(--color-chart-5)",
       },
       {
         priority: "medium",
         tickets: mediumPriority,
-        fill: "var(--color-medium)",
+        fill: "var(--color-chart-4)",
       },
-      { priority: "low", tickets: lowPriority, fill: "var(--color-low)" },
+      { priority: "low", tickets: lowPriority, fill: "var(--color-chart-1)" },
     ];
   }, [highestPriority, mediumPriority, lowPriority]);
 
@@ -65,15 +65,12 @@ export function TicketPriorityChart({
     },
     high: {
       label: "High",
-      color: "#FF0000",
     },
     medium: {
       label: "Medium",
-      color: "#FFA500",
     },
     low: {
       label: "Low",
-      color: "#008000",
     },
   } satisfies ChartConfig;
 

@@ -1,14 +1,13 @@
 import Logo from "@/components/Logo";
-import logoBlack from "@/assets/imgs/LogoBlack.png";
+import logoIcon from "@/assets/imgs/LogoIcon.png";
 
 const SidebarLogo = ({ sideBarOpen }: { sideBarOpen: boolean }) => {
   return sideBarOpen ? (
     <Logo />
   ) : (
     <img
-      src={logoBlack}
-      alt=""
-      className="w-10"
+      src={logoIcon}
+      alt="Tictrak triangle icon logo"
     />
   );
 };

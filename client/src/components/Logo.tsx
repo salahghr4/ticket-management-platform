@@ -5,13 +5,13 @@ const Logo = () => {
   return (
     <Link
       to="/"
-      className="flex items-center"
+      className="flex justify-center items-center"
     >
-      <div
-        className="flex h-[60px] w-[60px] items-center justify-center rounded-md bg-cover bg-center"
-        style={{ backgroundImage: `url(${logoBlack})` }}
+      <img
+        src={logoBlack}
+        alt="TicTrack logo with a triangle icon"
+        className="w-[90%]"
       />
-      <span className="font-viper text-3xl pt-2">TICTRACK</span>
     </Link>
   );
 };

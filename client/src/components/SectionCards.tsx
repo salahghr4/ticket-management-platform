@@ -45,7 +45,7 @@ export function SectionCards({ ticketStats }: { ticketStats: TicketStats }) {
                 <NumberFlow value={card.value} />
               </CardTitle>
             </CardHeader>
-            <div className="absolute h-[2px] w-full bottom-0 start-0 bg-gradient-to-r from-transparent from-10% via-foreground to-transparent to-90%"></div>
+            <div className="absolute h-[2px] w-full bottom-0 start-0 bg-gradient-to-r from-transparent from-10% via-primary to-transparent to-90%"></div>
           </Card>
         </div>
       ))}

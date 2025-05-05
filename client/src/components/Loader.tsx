@@ -1,10 +1,10 @@
-import logoBlack from "@/assets/imgs/LogoBlack.png";
+import logoIcon from "@/assets/imgs/LogoIcon.png";
 
 const Loader = () => {
   return (
     <div className="flex justify-center items-center h-svh">
       <img
-        src={logoBlack}
+        src={logoIcon}
         alt=""
         className="w-10 animate-spin"
         style={{ animationDuration: ".5s" }}
