@@ -23,15 +23,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const getUser = async () => {
       if (token) {
-        const response = await authService.getMe();
-        if (response.message === "Unauthenticated.") {
+        setIsLoading(true);
+        const user = await authService.getMe();
+        if (!user) {
           logout();
         }
         setUser(user);
+        setIsLoading(false);
       }
     };
     getUser();
-  }, [user, token]);
+  }, [token]);
 
   const login = async (email: string, password: string) => {
     const response = await authService.authenticateUser(email, password);

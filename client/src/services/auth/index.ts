@@ -1,5 +1,5 @@
 import api from "@/lib/api";
-import { LoginResponse } from "@/types/auth";
+import { LoginResponse, User } from "@/types/auth";
 
 const authenticateUser = async (email: string, password: string) => {
   return await api<LoginResponse>({
@@ -17,7 +17,7 @@ const deauthenticateUser = async () => {
 };
 
 const getMe = async () => {
-  return await api<LoginResponse>({
+  return await api<User>({
     method: "GET",
     url: "/me",
   });
