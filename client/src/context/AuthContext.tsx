@@ -24,11 +24,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const getUser = async () => {
       if (token) {
         setIsLoading(true);
-        const user = await authService.getMe();
-        if (!user) {
-          logout();
+        const response = await authService.getMe();
+        if (!response || (response as { message: string }).message === "Unauthenticated.") {
+          setUser(null);
+          setToken(null);
+          storage.remove("user");
+          storage.remove("token");
+        } else {
+          setUser(response as User);
         }
-        setUser(user);
         setIsLoading(false);
       }
     };

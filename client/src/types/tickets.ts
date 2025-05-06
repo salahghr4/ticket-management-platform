@@ -7,7 +7,7 @@ export type Ticket = {
   department_id: number;
   user_id: number;
   assigned_to: number;
-  status: "pending" | "in_progress" | "resolved" | "rejected";
+  status: "open" | "in progress" | "resolved" | "closed" | "rejected";
   priority: "low" | "medium" | "high";
   due_date: Date;
   created_at: Date;
