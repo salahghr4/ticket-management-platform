@@ -42,10 +42,11 @@ class TicketController extends Controller
 
     public function stats()
     {
-        $openTickets = Ticket::where('status', 'pending')->count();
-        $inProgressTickets = Ticket::where('status', 'in_progress')->count();
+        $openTickets = Ticket::where('status', 'open')->count();
+        $inProgressTickets = Ticket::where('status', 'in progress')->count();
         $resolvedTickets = Ticket::where('status', 'resolved')->count();
         $rejectedTickets = Ticket::where('status', 'rejected')->count();
+        $closedTickets = Ticket::where('status', 'closed')->count();
 
         // get the how many ticket created every day for the last 3 months
         $ticketCounts = Ticket::selectRaw('DATE(created_at) as date, COUNT(*) as count')
@@ -60,11 +61,12 @@ class TicketController extends Controller
             'inProgressTickets' => $inProgressTickets,
             'resolvedTickets' => $resolvedTickets,
             'rejectedTickets' => $rejectedTickets,
+            'closedTickets' => $closedTickets,
             'ticketCounts' => $ticketCounts,
             'highestPriority' => Ticket::where('priority', 'high')->count(),
             'mediumPriority' => Ticket::where('priority', 'medium')->count(),
             'lowPriority' => Ticket::where('priority', 'low')->count(),
-            'tickets' => Ticket::with(['user:id,name,email', 'assignee:id,name,email'])->latest()->limit(8)->get()
+            'tickets' => Ticket::with(['user:id,name,email', 'assignee:id,name,email', 'department:id,name'])->latest()->limit(8)->get()
         ]);
 
     }

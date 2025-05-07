@@ -1,4 +1,4 @@
-import { User } from "@/types/auth";
+import { Department, User } from "@/types/auth";
 
 export type Ticket = {
   id: number;
@@ -14,6 +14,7 @@ export type Ticket = {
   updated_at: Date;
   user: User;
   assignee: User;
+  department: Department;
 }
 
 export type TicketStats = {
@@ -21,6 +22,7 @@ export type TicketStats = {
   openTickets: number;
   inProgressTickets: number;
   resolvedTickets: number;
+  closedTickets: number;
   rejectedTickets: number;
   ticketCounts: { date: string; count: number }[];
   highestPriority: number;

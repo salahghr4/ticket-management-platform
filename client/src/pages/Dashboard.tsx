@@ -15,6 +15,7 @@ const Dashboard = () => {
     openTickets: 0,
     inProgressTickets: 0,
     resolvedTickets: 0,
+    closedTickets: 0,
     rejectedTickets: 0,
     ticketCounts: [],
     highestPriority: 0,

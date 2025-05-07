@@ -29,10 +29,14 @@ export function SectionCards({ ticketStats }: { ticketStats: TicketStats }) {
       title: "Rejected tickets",
       value: ticketStats.rejectedTickets,
     },
+    {
+      title: "Closed tickets",
+      value: ticketStats.closedTickets,
+    },
   ];
 
   return (
-    <div className="*:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-5 grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card lg:px-6">
+    <div className="*:data-[slot=card]:shadow-xs @xl/main:grid-cols-3 @7xl/main:grid-cols-6 grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card lg:px-6">
       {cardData.map((card) => (
         <div
           className="relative"
