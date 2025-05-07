@@ -1,21 +1,18 @@
-import authImgDark from "@/assets/imgs/authImgDark.png";
 import authImg from "@/assets/imgs/authImg.png";
-import { Outlet } from "react-router-dom";
+import Loader from "@/components/Loader";
 import Logo from "@/components/Logo";
 import { useAuth } from "@/hooks/useAuth";
-import Loader from "@/components/Loader";
-import { useTheme } from "@/hooks/usetheme";
+import { Outlet } from "react-router-dom";
 
 const AuthLayout = () => {
   const { isLoading } = useAuth();
-  const { theme } = useTheme();
 
   if (isLoading) {
     return <Loader />;
   }
 
   return (
-    <div className="grid min-h-svh lg:grid-cols-2">
+    <div className="grid min-h-svh lg:grid-cols-2 dark:bg-[#1f1a23]">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 mt-10">
           <div className="w-1/2">
@@ -30,9 +27,9 @@ const AuthLayout = () => {
       </div>
       <div className="relative hidden bg-muted lg:block">
         <img
-          src={theme === "dark" ? authImgDark : authImg}
+          src={authImg}
           alt="Image"
-          className="absolute inset-0 h-full w-full object-cover brightness-80"
+          className="absolute inset-0 h-full w-full object-cover"
         />
       </div>
     </div>

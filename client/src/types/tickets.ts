@@ -30,3 +30,25 @@ export type TicketStats = {
   lowPriority: number;
   tickets: Ticket[]
 };
+
+
+export type TicketsResponse = {
+  success: boolean;
+  tickets?: Ticket[];
+  message?: string;
+  errors?: Record<string, string[]>;
+};
+
+export type TicketResponse = {
+  success: boolean;
+  ticket?: Ticket;
+  message?: string;
+  errors?: Record<string, string[]>;
+};
+
+
+
+
+
+
+

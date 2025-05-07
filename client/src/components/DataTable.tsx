@@ -29,7 +29,7 @@ import {
   Timer,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -59,17 +59,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { User } from "@/types/auth";
-import { Ticket } from "@/types/tickets";
+import { Ticket, TicketStats } from "@/types/tickets";
 import { Link } from "react-router-dom";
 import { DataTableDateFilter } from "@/components/DataTableDateFilter";
-
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-};
+import { toast } from "sonner";
+import { formatDate } from "@/lib/format";
+import { useTicket } from "@/hooks/useTicket";
 
 // Create status badge with appropriate color
 const StatusBadge = ({ status }: { status: Ticket["status"] }) => {
@@ -181,7 +176,13 @@ const columnHeader = ({
   );
 };
 
-export default function DataTable({ data }: { data: Ticket[] }) {
+export default function DataTable({
+  data,
+  setTicketStats,
+}: {
+  data: Ticket[];
+  setTicketStats: React.Dispatch<React.SetStateAction<TicketStats>>;
+}) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -189,6 +190,41 @@ export default function DataTable({ data }: { data: Ticket[] }) {
   const [statusPopoverOpen, setStatusPopoverOpen] = useState(false);
   const [priorityPopoverOpen, setPriorityPopoverOpen] = useState(false);
   const [departmentPopoverOpen, setDepartmentPopoverOpen] = useState(false);
+
+  const { updateTicket } = useTicket();
+
+  const handleStatusChange = useCallback(
+    async (ticket: Ticket) => {
+      const newStatus =
+        ticket.status === "open"
+          ? "in progress"
+          : ticket.status === "in progress"
+          ? "resolved"
+          : ticket.status === "resolved"
+          ? "closed"
+          : "open";
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { updated_at, user, assignee, department, ...rest } = ticket;
+      const tikcetData = {
+        ...rest,
+        status: newStatus as Ticket["status"],
+      };
+      const updatedTicket = await updateTicket(tikcetData);
+      console.log(updatedTicket);
+      if (updatedTicket) {
+        setTicketStats((prev: TicketStats) => {
+          return {
+            ...prev,
+            tickets: prev.tickets.map((t: Ticket) =>
+              t.id === ticket.id ? updatedTicket : t
+            ),
+          };
+        });
+      }
+      toast.success(`Ticket status updated to ${newStatus}`);
+    },
+    [updateTicket, setTicketStats]
+  );
 
   const columns: ColumnDef<Ticket>[] = useMemo(
     () => [
@@ -223,7 +259,7 @@ export default function DataTable({ data }: { data: Ticket[] }) {
         cell: ({ row }) => (
           <Link
             to={`/tickets/${row.getValue("id")}`}
-            className="underline text-primary"
+            className="underline text-primary dark:text-accent-foreground/80"
           >
             <span className="text-center">#{row.getValue("id")}</span>
           </Link>
@@ -266,8 +302,10 @@ export default function DataTable({ data }: { data: Ticket[] }) {
           const user = row.getValue("user") as User;
           return (
             <div className="flex flex-col">
-              <span className="font-medium">{user.name}</span>
-              <span className="text-xs text-gray-500">{user.email}</span>
+              <span className="font-medium">{user?.name || "N/A"}</span>
+              <span className="text-xs text-gray-500">
+                {user?.email || "N/A"}
+              </span>
             </div>
           );
         },
@@ -279,8 +317,10 @@ export default function DataTable({ data }: { data: Ticket[] }) {
           const assignee = row.getValue("assignee") as User;
           return (
             <div className="flex flex-col">
-              <span className="font-medium">{assignee.name}</span>
-              <span className="text-xs text-gray-500">{assignee.email}</span>
+              <span className="font-medium">{assignee?.name || "N/A"}</span>
+              <span className="text-xs text-gray-500">
+                {assignee?.email || "N/A"}
+              </span>
             </div>
           );
         },
@@ -293,7 +333,7 @@ export default function DataTable({ data }: { data: Ticket[] }) {
           const department = row.getValue("department") as string;
           return (
             <div className="flex flex-col">
-              <span className="font-medium">{department}</span>
+              <span className="font-medium">{department || "N/A"}</span>
             </div>
           );
         },
@@ -304,13 +344,19 @@ export default function DataTable({ data }: { data: Ticket[] }) {
       {
         accessorKey: "due_date",
         header: ({ column }) => columnHeader({ column, header: "Due Date" }),
-        cell: ({ row }) => formatDate(row.getValue("due_date")),
+        cell: ({ row }) =>
+          row.getValue("due_date")
+            ? formatDate(row.getValue("due_date") as string)
+            : "N/A",
       },
       {
         id: "created_at",
         accessorKey: "created_at",
         header: ({ column }) => columnHeader({ column, header: "Created At" }),
-        cell: ({ row }) => formatDate(row.getValue("created_at")),
+        cell: ({ row }) =>
+          row.getValue("created_at")
+            ? formatDate(row.getValue("created_at") as string)
+            : "N/A",
         enableColumnFilter: true,
         filterFn: (row, _, value) => {
           const createdAt = row.getValue("created_at");
@@ -348,18 +394,38 @@ export default function DataTable({ data }: { data: Ticket[] }) {
                 <DropdownMenuItem
                   onClick={() => {
                     navigator.clipboard.writeText(ticket.id.toString());
+                    toast.success("Ticket ID copied to clipboard");
                   }}
                   className="cursor-pointer"
                 >
                   Copy ticket ID
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>View details</DropdownMenuItem>
-                <DropdownMenuItem>Edit ticket</DropdownMenuItem>
-                <DropdownMenuItem>Assign to me</DropdownMenuItem>
                 <DropdownMenuItem>
+                  <Link
+                    to={`/tickets/${ticket.id}`}
+                    className="cursor-pointer"
+                  >
+                    View details
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link
+                    to={`/tickets/${ticket.id}/edit`}
+                    className="cursor-pointer"
+                  >
+                    Edit ticket
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleStatusChange(ticket)}>
                   Mark as{" "}
-                  {ticket.status === "rejected" ? "pending" : "resolved"}
+                  {ticket.status === "open"
+                    ? "in progress"
+                    : ticket.status === "in progress"
+                    ? "resolved"
+                    : ticket.status === "resolved"
+                    ? "closed"
+                    : "open"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -367,7 +433,7 @@ export default function DataTable({ data }: { data: Ticket[] }) {
         },
       },
     ],
-    []
+    [handleStatusChange]
   );
 
   const table = useReactTable({
@@ -393,27 +459,52 @@ export default function DataTable({ data }: { data: Ticket[] }) {
     {
       label: "Open",
       value: "open",
-      icon: <CircleDot className="h-4 w-4 text-gray-500" />,
+      icon: (
+        <CircleDot
+          size={16}
+          className=" text-gray-500"
+        />
+      ),
     },
     {
       label: "In Progress",
       value: "in progress",
-      icon: <Timer className="h-4 w-4 text-gray-500" />,
+      icon: (
+        <Timer
+          size={16}
+          className=" text-gray-500"
+        />
+      ),
     },
     {
       label: "Resolved",
       value: "resolved",
-      icon: <CircleCheck className="h-4 w-4 text-gray-500" />,
+      icon: (
+        <CircleCheck
+          size={16}
+          className=" text-gray-500"
+        />
+      ),
     },
     {
       label: "Closed",
       value: "closed",
-      icon: <Circle className="h-4 w-4 text-gray-500" />,
+      icon: (
+        <Circle
+          size={16}
+          className=" text-gray-500"
+        />
+      ),
     },
     {
       label: "Rejected",
       value: "rejected",
-      icon: <Ban className="h-4 w-4 text-gray-500" />,
+      icon: (
+        <Ban
+          size={16}
+          className=" text-gray-500"
+        />
+      ),
     },
   ];
 

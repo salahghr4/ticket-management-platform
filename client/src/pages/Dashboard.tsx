@@ -26,8 +26,10 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchTicketStats = async () => {
-      const ticketStats = await ticketsService.getTicketStats();
-      setTicketStats(ticketStats);
+      const response = await ticketsService.getTicketStats();
+      if (response) {
+        setTicketStats(response as TicketStats);
+      }
     };
     fetchTicketStats();
   }, []);
@@ -53,7 +55,7 @@ const Dashboard = () => {
                   <CardTitle>Recent Tickets</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <DataTable data={ticketStats.tickets} />
+                  <DataTable data={ticketStats.tickets} setTicketStats={setTicketStats}/>
                 </CardContent>
               </Card>
             </div>

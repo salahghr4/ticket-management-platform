@@ -5,39 +5,114 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class TicketController extends Controller
 {
 
     public function index()
     {
-        return response()->json(Ticket::with('user')->orderBy('created_at', 'desc')->get());
+        return response()->json(['success' => true, 'tickets' => Ticket::with('user')->orderBy('created_at', 'desc')->get()]);
     }
 
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'priority' => 'required|in:low,medium,high',
             'department_id' => 'required|exists:departments,id',
             'assigned_to' => 'nullable|exists:users,id',
             'due_date' => 'nullable|date',
+            'status' => 'nullable|in:open,in progress,resolved,rejected,closed',
         ]);
 
-        $ticket = Ticket::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'priority' => $request->priority,
-            'department_id' => $request->department_id,
-            'user_id' => Auth::id(),
-            'assigned_to' => $request->assigned_to ?? null,
-            'due_date' => $request->due_date ?? null,
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create ticket',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $validated = $validator->validated();
+        $validated['user_id'] = $request->user()->id;
+
+        $ticket = Ticket::create($validated);
+        return response()->json([
+            'success' => true,
+            'message' => 'Ticket created successfully',
+            'ticket' => $ticket->load(['user:id,name,email', 'assignee:id,name,email', 'department:id,name'])
+        ]);
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $ticket = Ticket::find($id);
+
+        if (!$ticket) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ticket not found'
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'priority' => 'required|in:low,medium,high',
+            'department_id' => 'required|exists:departments,id',
+            'assigned_to' => 'nullable|exists:users,id',
+            'due_date' => 'nullable|date',
+            'status' => 'required|in:open,in progress,resolved,rejected,closed',
         ]);
 
-        return response()->json(['message' => 'Ticket created successfully', 'ticket' => $ticket], 201);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update ticket',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $ticket->update($validator->validated());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Ticket updated successfully',
+            'ticket' => $ticket->load(['user:id,name,email', 'assignee:id,name,email', 'department:id,name'])
+        ]);
+    }
+
+    public function destroy(string $id)
+    {
+        $ticket = Ticket::find($id);
+
+        if (!$ticket) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ticket not found'
+            ], 404);
+        }
+
+        $ticket->delete();
+
+        return response()->json(['success' => true, 'message' => 'Ticket deleted successfully']);
+    }
+
+    public function show(string $id)
+    {
+        $ticket = Ticket::find($id);
+
+        if (!$ticket) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ticket not found'
+            ], 404);
+        }
+
+        return response()->json(['success' => true, 'ticket' => $ticket->load(['user:id,name,email', 'assignee:id,name,email', 'department:id,name'])]);
     }
 
     public function stats()
@@ -68,6 +143,5 @@ class TicketController extends Controller
             'lowPriority' => Ticket::where('priority', 'low')->count(),
             'tickets' => Ticket::with(['user:id,name,email', 'assignee:id,name,email', 'department:id,name'])->latest()->limit(8)->get()
         ]);
-
     }
 }

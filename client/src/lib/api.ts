@@ -1,6 +1,5 @@
 import axiosClient, { AxiosError, AxiosRequestConfig } from "axios";
 import storage from "./storage";
-
 const axiosInstance = axiosClient.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
@@ -17,15 +16,15 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
-const api = async <T>(cfg: AxiosRequestConfig) => {
+const api = async <TData>(cfg: AxiosRequestConfig) => {
   try {
-    const response = await axiosInstance.request<T>(cfg);
-    return response.data as T;
+    const response = await axiosInstance.request<TData>(cfg);
+    return response.data as TData;
   } catch (error) {
     if (error instanceof AxiosError && error.response) {
-      return error.response.data as T;
+      return error.response.data as TData;
     }
-    return { message: "An unknown error occurred, please try again later" } as T;
+    return { message: "An unknown error occurred, please try again later", success: false };
   }
 };
 
