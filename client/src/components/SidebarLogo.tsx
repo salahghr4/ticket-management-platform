@@ -1,5 +1,5 @@
 import Logo from "@/components/Logo";
-import logoIcon from "@/assets/imgs/LogoIcon.png";
+import logoIcon from "@/assets/imgs/logo.png";
 
 const SidebarLogo = ({ sideBarOpen }: { sideBarOpen: boolean }) => {
   return sideBarOpen ? (
@@ -7,7 +7,7 @@ const SidebarLogo = ({ sideBarOpen }: { sideBarOpen: boolean }) => {
   ) : (
     <img
       src={logoIcon}
-      alt="Tictrak triangle icon logo"
+      alt="TYTICKET logo"
     />
   );
 };
