@@ -25,13 +25,15 @@ const Dashboard = () => {
     lowPriority: 0,
     tickets: [],
   });
-
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const fetchTicketStats = async () => {
+      setIsLoading(true);
       const response = await ticketsService.getTicketStats();
       if (response) {
         setTicketStats(response as TicketStats);
       }
+      setIsLoading(false);
     };
     fetchTicketStats();
   }, []);
@@ -81,6 +83,7 @@ const Dashboard = () => {
                 <DataTable
                   data={ticketStats.tickets}
                   syncTickets={syncTickets}
+                  isLoading={isLoading}
                 />
               </CardContent>
             </Card>

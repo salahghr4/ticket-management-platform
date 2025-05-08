@@ -69,6 +69,7 @@ import { User } from "@/types/auth";
 import { Ticket } from "@/types/tickets";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { DataTableSkeleton } from "./DataTableSkeleton";
 
 // Create status badge with appropriate color
 const StatusBadge = ({ status }: { status: Ticket["status"] }) => {
@@ -183,9 +184,11 @@ const columnHeader = ({
 export default function DataTable({
   data,
   syncTickets,
+  isLoading = false,
 }: {
   data: Ticket[];
   syncTickets: (updatedTicket: Ticket) => void;
+  isLoading?: boolean;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -547,6 +550,10 @@ export default function DataTable({
     (table.getColumn("priority")?.getFilterValue() as string[]) || [];
   const selectedDepartments =
     (table.getColumn("department")?.getFilterValue() as string[]) || [];
+
+  if (isLoading) {
+    return <DataTableSkeleton />;
+  }
 
   return (
     <div className="w-full">

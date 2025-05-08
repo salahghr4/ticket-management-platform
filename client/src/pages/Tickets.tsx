@@ -77,6 +77,7 @@ const Tickets = () => {
             <DataTable
               data={tickets}
               syncTickets={syncTickets}
+              isLoading={isLoading}
             />
           </CardContent>
         </Card>
