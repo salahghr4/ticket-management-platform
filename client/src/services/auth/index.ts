@@ -17,7 +17,7 @@ const deauthenticateUser = async ()=> {
 };
 
 const getMe = async () => {
-  return await api<User | {message: string}>({
+  return await api<User | { message: string }>({
     method: "GET",
     url: "/me",
   });

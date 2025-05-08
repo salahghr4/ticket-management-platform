@@ -16,15 +16,15 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
-const api = async <TData>(cfg: AxiosRequestConfig) => {
+const api = async <TData>(cfg: AxiosRequestConfig): Promise<TData> => {
   try {
     const response = await axiosInstance.request<TData>(cfg);
     return response.data as TData;
   } catch (error) {
     if (error instanceof AxiosError && error.response) {
-      return error.response.data as TData;
+      return error.response.data;
     }
-    return { message: "An unknown error occurred, please try again later", success: false };
+    return { message: "An unknown error occurred, please try again later", success: false } as TData;
   }
 };
 

@@ -34,15 +34,15 @@ export type TicketStats = {
 
 export type TicketsResponse = {
   success: boolean;
-  tickets?: Ticket[];
-  message?: string;
+  tickets: Ticket[];
+  message: string;
   errors?: Record<string, string[]>;
 };
 
 export type TicketResponse = {
   success: boolean;
-  ticket?: Ticket;
-  message?: string;
+  ticket: Ticket;
+  message: string;
   errors?: Record<string, string[]>;
 };
 

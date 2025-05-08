@@ -15,6 +15,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -39,6 +40,7 @@ const Login = () => {
     const { success, error } = await login(email, password);
     if (success) {
       navigate(redirectUrl, { replace: true });
+      toast.success("Login successful");
     } else {
       setError(error);
     }
@@ -57,7 +59,7 @@ const Login = () => {
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-7"
-          >
+        >
           {error && <p className="text-red-500 text-center text-sm">{error}</p>}
           <FormField
             control={form.control}

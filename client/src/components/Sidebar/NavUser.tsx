@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 import { User } from "@/types/auth";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 export function NavUser({ user }: { user: User }) {
   const { isMobile } = useSidebar();
@@ -71,7 +72,13 @@ export function NavUser({ user }: { user: User }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => logout()}
+              onClick={() =>
+                toast.promise(logout(), {
+                  loading: "Logging out...",
+                  success: () => "Logged out successfully",
+                  error: "Error logging out, please try again",
+                })
+              }
               className="cursor-pointer"
             >
               <LogOutIcon />

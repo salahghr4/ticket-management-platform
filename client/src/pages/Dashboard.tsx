@@ -1,18 +1,15 @@
 import { SectionCards } from "@/components/Cards/SectionCards";
-import { Ticket, TicketStats } from "@/types/tickets";
-import { useState } from "react";
-import { useEffect } from "react";
-import ticketsService from "@/services/tickets";
-import { fillMissingDates } from "@/lib/utils";
 import { TicketChart } from "@/components/Charts/TicketChart";
 import { TicketPriorityChart } from "@/components/Charts/TicketPriorityChart";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import DataTable from "@/components/DataTale/DataTable";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTicketStats } from "@/hooks/useTickets";
+import { fillMissingDates } from "@/lib/utils";
 import { Link } from "react-router-dom";
 
 const Dashboard = () => {
-  const [ticketStats, setTicketStats] = useState<TicketStats>({
+  const initialTicketStats = {
     totalTickets: 0,
     openTickets: 0,
     inProgressTickets: 0,
@@ -24,44 +21,23 @@ const Dashboard = () => {
     mediumPriority: 0,
     lowPriority: 0,
     tickets: [],
-  });
-  const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    const fetchTicketStats = async () => {
-      setIsLoading(true);
-      const response = await ticketsService.getTicketStats();
-      if (response) {
-        setTicketStats(response as TicketStats);
-      }
-      setIsLoading(false);
-    };
-    fetchTicketStats();
-  }, []);
-
-  const syncTickets = (updatedTicket: Ticket) => {
-    setTicketStats((prev: TicketStats) => {
-      return {
-        ...prev,
-        tickets: prev.tickets.map((ticket: Ticket) =>
-          ticket.id === updatedTicket.id ? updatedTicket : ticket
-        ),
-      };
-    });
   };
+
+  const { data: ticketStats, isLoading } = useTicketStats();
 
   return (
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col gap-2">
         <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-          <SectionCards ticketStats={ticketStats} />
+          <SectionCards ticketStats={ticketStats || initialTicketStats} />
           <div className="flex flex-col gap-4 flex-wrap px-4 lg:flex-row lg:gap-6 lg:px-6">
             <TicketChart
-              chartData={fillMissingDates(ticketStats.ticketCounts)}
+              chartData={fillMissingDates(ticketStats?.ticketCounts || [])}
             />
             <TicketPriorityChart
-              highestPriority={ticketStats.highestPriority}
-              mediumPriority={ticketStats.mediumPriority}
-              lowPriority={ticketStats.lowPriority}
+              highestPriority={ticketStats?.highestPriority || 0}
+              mediumPriority={ticketStats?.mediumPriority || 0}
+              lowPriority={ticketStats?.lowPriority || 0}
             />
           </div>
           <div className="flex flex-col gap-4 px-4 lg:px-6">
@@ -81,8 +57,7 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent>
                 <DataTable
-                  data={ticketStats.tickets}
-                  syncTickets={syncTickets}
+                  data={ticketStats?.tickets || []}
                   isLoading={isLoading}
                 />
               </CardContent>

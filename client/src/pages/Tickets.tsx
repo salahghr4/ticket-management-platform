@@ -1,34 +1,12 @@
 import DataTable from "@/components/DataTale/DataTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useTicket } from "@/hooks/useTicket";
-import { Ticket } from "@/types/tickets";
+import { useTickets } from "@/hooks/useTickets";
 import { Plus, RefreshCw, Ticket as TicketIcon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const Tickets = () => {
-  const [tickets, setTickets] = useState<Ticket[]>([]);
-  const { getTickets, isLoading } = useTicket();
-
-  const fetchTickets = useCallback(async () => {
-    const fetchedTickets = await getTickets();
-    if (fetchedTickets) {
-      setTickets(fetchedTickets);
-    }
-  }, [getTickets]);
-
-  useEffect(() => {
-    fetchTickets();
-  }, [getTickets, fetchTickets]);
-
-  const syncTickets = (updatedTicket: Ticket) => {
-    setTickets((prev: Ticket[]) => {
-      return prev.map((ticket: Ticket) =>
-        ticket.id === updatedTicket.id ? updatedTicket : ticket
-      );
-    });
-  };
+  const { data: ticketsData, isLoading, refetch } = useTickets();
 
   return (
     <div className="min-h-screen w-full flex justify-center px-4 py-6">
@@ -46,7 +24,7 @@ const Tickets = () => {
           <div className="flex gap-3 w-full sm:w-auto">
             <Button
               variant="outline"
-              onClick={fetchTickets}
+              onClick={() => refetch()}
               disabled={isLoading}
               className="flex-1 sm:flex-none"
             >
@@ -75,8 +53,7 @@ const Tickets = () => {
           </CardHeader>
           <CardContent className="px-6">
             <DataTable
-              data={tickets}
-              syncTickets={syncTickets}
+              data={ticketsData?.tickets || []}
               isLoading={isLoading}
             />
           </CardContent>
