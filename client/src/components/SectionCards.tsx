@@ -12,26 +12,32 @@ export function SectionCards({ ticketStats }: { ticketStats: TicketStats }) {
     {
       title: "Total tickets",
       value: ticketStats.totalTickets,
+      color: "bg-primary",
     },
     {
       title: "Open tickets",
       value: ticketStats.openTickets,
+      color: "bg-blue-500",
     },
     {
       title: "In Progress tickets",
       value: ticketStats.inProgressTickets,
+      color: "bg-yellow-500",
     },
     {
       title: "Resolved tickets",
       value: ticketStats.resolvedTickets,
+      color: "bg-green-500",
     },
     {
       title: "Rejected tickets",
       value: ticketStats.rejectedTickets,
+      color: "bg-red-500",
     },
     {
       title: "Closed tickets",
       value: ticketStats.closedTickets,
+      color: "bg-gray-500",
     },
   ];
 
@@ -46,7 +52,13 @@ export function SectionCards({ ticketStats }: { ticketStats: TicketStats }) {
             <CardHeader>
               <CardDescription>{card.title}</CardDescription>
               <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
-                <NumberFlow value={card.value} />
+                <div className="flex items-center gap-2">
+                  <div className={`h-3 w-3 rounded-full ${card.color}`} />
+                  <NumberFlow
+                    value={card.value}
+                    className="text-primary dark:text-primary-foreground text-2xl"
+                  />
+                </div>
               </CardTitle>
             </CardHeader>
             <div className="absolute h-[2px] w-full bottom-0 start-0 bg-gradient-to-r from-transparent from-10% via-primary to-transparent to-90%"></div>

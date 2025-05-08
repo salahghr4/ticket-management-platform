@@ -1,7 +1,8 @@
 import { AuthContextType, User } from "@/types/auth";
-import { createContext, useState, useLayoutEffect, useEffect } from "react";
+import { createContext, useState, useLayoutEffect } from "react";
 import authService from "@/services/auth";
 import storage from "@/lib/storage";
+import { toast } from "sonner";
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
@@ -20,16 +21,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(false);
   }, [token]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const getUser = async () => {
       if (token) {
         setIsLoading(true);
         const response = await authService.getMe();
-        if (!response || (response as { message: string }).message === "Unauthenticated.") {
-          setUser(null);
-          setToken(null);
-          storage.remove("user");
-          storage.remove("token");
+        if ((response as { message: string }).message === "Unauthenticated.") {
+          clearUserData();
+        } else if ((response as { success: boolean }).success === false) {
+          clearUserData();
+          toast.error((response as { message: string }).message);
         } else {
           setUser(response as User);
         }
@@ -54,6 +55,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   };
 
+  const clearUserData = () => {
+    setUser(null);
+    setToken(null);
+    storage.remove("user");
+    storage.remove("token");
+  };
+
   const logout = async () => {
     setIsLoading(true);
     try {
@@ -61,10 +69,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
-      storage.remove("user");
-      storage.remove("token");
-      setUser(null);
-      setToken(null);
+      clearUserData();
       setIsLoading(false);
     }
   };

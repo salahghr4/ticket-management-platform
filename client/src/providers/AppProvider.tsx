@@ -6,7 +6,7 @@ const AppProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <AuthProvider>{children}</AuthProvider>
-      <Toaster richColors expand closeButton/>
+      <Toaster expand />
     </ThemeProvider>
   );
 };

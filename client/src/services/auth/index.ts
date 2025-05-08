@@ -1,7 +1,7 @@
 import api from "@/lib/api";
 import { LoginResponse, User } from "@/types/auth";
 
-const authenticateUser = async (email: string, password: string) => {
+const authenticateUser = async (email: string, password: string): Promise<LoginResponse> => {
   return await api<LoginResponse>({
     method: "POST",
     url: "/login",
@@ -9,7 +9,7 @@ const authenticateUser = async (email: string, password: string) => {
   });
 };
 
-const deauthenticateUser = async () => {
+const deauthenticateUser = async ()=> {
   return await api<LoginResponse>({
     method: "POST",
     url: "/logout",

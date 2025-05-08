@@ -12,7 +12,7 @@ class TicketController extends Controller
 
     public function index()
     {
-        return response()->json(['success' => true, 'tickets' => Ticket::with('user')->orderBy('created_at', 'desc')->get()]);
+        return response()->json(['success' => true, 'tickets' => Ticket::with('user:id,name,email', 'assignee:id,name,email', 'department:id,name')->orderBy('created_at', 'desc')->get()]);
     }
 
 
