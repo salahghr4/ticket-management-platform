@@ -4,6 +4,10 @@ import logoWhite from "@/assets/imgs/LogoWhite.png";
 import { useTheme } from "@/hooks/useTheme";
 const Logo = () => {
   const { theme } = useTheme();
+  // handle system theme
+  const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
   return (
     <Link
       to="/"
@@ -12,7 +16,7 @@ const Logo = () => {
       <div
         className="flex h-[40px] w-[40px] items-center justify-center rounded-md bg-cover bg-center"
         style={{
-          backgroundImage: `url(${theme === "dark" ? logoWhite : logoBlack})`,
+          backgroundImage: `url(${theme === "dark" || systemTheme === "dark" ? logoWhite : logoBlack})`,
         }}
       />
       <span className="font-viper text-3xl pt-2 text-primary dark:text-white">
