@@ -7,11 +7,14 @@ const Loader = () => {
   const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
     ? "dark"
     : "light";
+
+  const resolvedTheme = theme === "system" ? systemTheme : theme;
+  const selectedLogo = resolvedTheme === "dark" ? logoWhite : logoIcon;
   return (
     <div className="flex justify-center items-center h-svh">
       <img
-        src={theme === "dark" || systemTheme === "dark" ? logoWhite : logoIcon}
-        alt=""
+        src={selectedLogo}
+        alt="TYTICKET logo"
         className="w-10 animate-spin"
         style={{ animationDuration: ".5s" }}
       />

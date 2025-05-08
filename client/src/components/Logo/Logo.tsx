@@ -8,6 +8,10 @@ const Logo = () => {
   const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
     ? "dark"
     : "light";
+
+  const resolvedTheme = theme === "system" ? systemTheme : theme;
+  const selectedLogo = resolvedTheme === "dark" ? logoWhite : logoBlack;
+  
   return (
     <Link
       to="/"
@@ -16,7 +20,7 @@ const Logo = () => {
       <div
         className="flex h-[40px] w-[40px] items-center justify-center rounded-md bg-cover bg-center"
         style={{
-          backgroundImage: `url(${theme === "dark" || systemTheme === "dark" ? logoWhite : logoBlack})`,
+          backgroundImage: `url(${selectedLogo})`,
         }}
       />
       <span className="font-viper text-3xl pt-2 text-primary dark:text-white">
