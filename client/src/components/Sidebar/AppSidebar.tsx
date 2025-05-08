@@ -1,5 +1,5 @@
-import { NavUser } from "@/components/NavUser";
-import SidebarLogo from "@/components/SidebarLogo";
+import { NavUser } from "@/components/Sidebar/NavUser";
+import SidebarLogo from "@/components/Logo/SidebarLogo";
 import {
   Sidebar,
   SidebarContent,

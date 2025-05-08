@@ -1,18 +1,13 @@
-import { SectionCards } from "@/components/SectionCards";
+import { SectionCards } from "@/components/Cards/SectionCards";
 import { Ticket, TicketStats } from "@/types/tickets";
 import { useState } from "react";
 import { useEffect } from "react";
 import ticketsService from "@/services/tickets";
 import { fillMissingDates } from "@/lib/utils";
-import { TicketChart } from "@/components/TicketChart";
-import { TicketPriorityChart } from "@/components/TicketPriorityChart";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
-import DataTable from "@/components/DataTable";
+import { TicketChart } from "@/components/Charts/TicketChart";
+import { TicketPriorityChart } from "@/components/Charts/TicketPriorityChart";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import DataTable from "@/components/DataTale/DataTable";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 

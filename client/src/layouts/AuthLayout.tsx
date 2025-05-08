@@ -1,6 +1,6 @@
 import authImg from "@/assets/imgs/authImg.png";
-import Loader from "@/components/Loader";
-import Logo from "@/components/Logo";
+import Loader from "@/components/Logo/Loader";
+import Logo from "@/components/Logo/Logo";
 import { useAuth } from "@/hooks/useAuth";
 import { Outlet } from "react-router-dom";
 

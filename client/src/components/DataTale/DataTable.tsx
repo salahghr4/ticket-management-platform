@@ -35,7 +35,7 @@ import {
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
-import { DataTableDateFilter } from "@/components/DataTableDateFilter";
+import { DataTableDateFilter } from "@/components/DataTale/DataTableDateFilter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
