@@ -1,13 +1,20 @@
 import { SectionCards } from "@/components/SectionCards";
-import { TicketStats } from "@/types/tickets";
+import { Ticket, TicketStats } from "@/types/tickets";
 import { useState } from "react";
 import { useEffect } from "react";
 import ticketsService from "@/services/tickets";
 import { fillMissingDates } from "@/lib/utils";
 import { TicketChart } from "@/components/TicketChart";
 import { TicketPriorityChart } from "@/components/TicketPriorityChart";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/components/ui/card";
 import DataTable from "@/components/DataTable";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const [ticketStats, setTicketStats] = useState<TicketStats>({
@@ -34,6 +41,17 @@ const Dashboard = () => {
     fetchTicketStats();
   }, []);
 
+  const syncTickets = (updatedTicket: Ticket) => {
+    setTicketStats((prev: TicketStats) => {
+      return {
+        ...prev,
+        tickets: prev.tickets.map((ticket: Ticket) =>
+          ticket.id === updatedTicket.id ? updatedTicket : ticket
+        ),
+      };
+    });
+  };
+
   return (
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col gap-2">
@@ -50,15 +68,28 @@ const Dashboard = () => {
             />
           </div>
           <div className="flex flex-col gap-4 px-4 lg:px-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Recent Tickets</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <DataTable data={ticketStats.tickets} setTicketStats={setTicketStats}/>
-                </CardContent>
-              </Card>
-            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex justify-between">
+                  <span className="flex items-center">Recent Tickets</span>
+                  <Link to="/tickets">
+                    <Button
+                      variant="link"
+                      className="text-sm dark:text-muted-foreground text-primary"
+                    >
+                      View all tickets
+                    </Button>
+                  </Link>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <DataTable
+                  data={ticketStats.tickets}
+                  syncTickets={syncTickets}
+                />
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
