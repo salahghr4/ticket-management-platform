@@ -9,6 +9,7 @@ import PublicRoutes from "@/routes/PublicRoutes";
 import Tickets from "@/pages/Tickets";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import CreateTicket from "@/pages/CreateTicket";
+import TicketDetails from "@/pages/TicketDetails";
 
 function App() {
   const { isLoading } = useAuth();
@@ -30,26 +31,12 @@ function App() {
         </Route>
         <Route element={<PrivateRoutes />}>
           <Route element={<AppLayout />}>
-            <Route
-              path="/"
-              element={<Navigate to="/dashboard" />}
-            />
-            <Route
-              path="/dashboard"
-              element={<Dashboard />}
-            />
-            <Route
-              path="/tickets"
-              element={<Tickets />}
-            />
-            <Route
-              path="/tickets/create"
-              element={<CreateTicket />}
-            />
-            <Route
-              path="/users"
-              element={<h1>USERS</h1>}
-            />
+            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/tickets" element={<Tickets />} />
+            <Route path="/tickets/create" element={<CreateTicket />} />
+            <Route path="/tickets/:id" element={<TicketDetails />} />
+            <Route path="/users" element={<h1>USERS</h1>} />
           </Route>
         </Route>
       </Routes>
