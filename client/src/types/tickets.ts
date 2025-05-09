@@ -4,51 +4,43 @@ export type Ticket = {
   id: number;
   title: string;
   description: string;
-  department_id: number;
+  department_id: number | null;
   user_id: number;
-  assigned_to: number;
+  assigned_to: number | null;
   status: "open" | "in progress" | "resolved" | "closed" | "rejected";
   priority: "low" | "medium" | "high";
-  due_date: Date;
+  due_date: Date | null;
   created_at: Date;
   updated_at: Date;
   user: User;
-  assignee: User;
+  assignee: User | null;
   department: Department;
-}
+};
 
 export type TicketStats = {
   totalTickets: number;
   openTickets: number;
   inProgressTickets: number;
   resolvedTickets: number;
-  closedTickets: number;
   rejectedTickets: number;
-  ticketCounts: { date: string; count: number }[];
+  closedTickets: number;
+  ticketCounts: {
+    date: string;
+    count: number;
+  }[];
   highestPriority: number;
   mediumPriority: number;
   lowPriority: number;
-  tickets: Ticket[]
+  tickets: Ticket[];
 };
-
 
 export type TicketsResponse = {
   success: boolean;
   tickets: Ticket[];
-  message: string;
-  errors?: Record<string, string[]>;
 };
 
 export type TicketResponse = {
   success: boolean;
-  ticket: Ticket;
   message: string;
-  errors?: Record<string, string[]>;
+  ticket: Ticket;
 };
-
-
-
-
-
-
-

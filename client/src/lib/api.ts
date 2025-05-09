@@ -16,6 +16,18 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      storage.remove("token");
+      storage.remove("user");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
 const api = async <TData>(cfg: AxiosRequestConfig): Promise<TData> => {
   try {
     const response = await axiosInstance.request<TData>(cfg);

@@ -33,7 +33,7 @@ export function NavUser({ user }: { user: User }) {
               className="group/account data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarFallback className="rounded-lg bg-sidebar-accent group-hover/account:bg-">
+                <AvatarFallback className="rounded-lg bg-sidebar-accent group-hover/account:bg-primary group-hover/account:text-primary-foreground">
                   {user?.name.slice(0, 2).toLocaleUpperCase()}
                 </AvatarFallback>
               </Avatar>

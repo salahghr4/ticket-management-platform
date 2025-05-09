@@ -26,14 +26,14 @@ const AppSidebar = () => {
       icon: LayoutDashboard,
     },
     {
-      title: "Users",
-      url: "/users",
-      icon: Users,
-    },
-    {
       title: "Tickets",
       url: "/tickets",
       icon: FolderKanban,
+    },
+    {
+      title: "Users",
+      url: "/users",
+      icon: Users,
     },
   ];
   const location = useLocation();

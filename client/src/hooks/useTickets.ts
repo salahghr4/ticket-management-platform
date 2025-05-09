@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ticketService from "@/services/tickets";
 import type { Ticket, TicketStats } from "@/types/tickets";
+import { TicketFormValues } from "@/validation/tickets";
 
 // Query keys
 export const ticketKeys = {
@@ -16,14 +17,14 @@ export const ticketKeys = {
 export const useTickets = () => {
   return useQuery({
     queryKey: ticketKeys.lists(),
-    queryFn: ticketService.getTickets,
+    queryFn: ticketService.getAll,
   });
 };
 
 export const useTicket = (id: number) => {
   return useQuery({
     queryKey: ticketKeys.detail(id),
-    queryFn: () => ticketService.getTicket(id),
+    queryFn: () => ticketService.getById(id),
     enabled: !!id,
   });
 };
@@ -32,7 +33,7 @@ export const useTicketStats = () => {
   return useQuery<TicketStats>({
     queryKey: ticketKeys.stats(),
     queryFn: async () => {
-      const response = await ticketService.getTicketStats();
+      const response = await ticketService.getStats();
       return response as TicketStats;
     },
   });
@@ -42,7 +43,7 @@ export const useCreateTicket = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ticketService.createTicket,
+    mutationFn: (ticket: TicketFormValues) => ticketService.create(ticket),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ticketKeys.lists() });
       queryClient.invalidateQueries({ queryKey: ticketKeys.stats() });
@@ -54,8 +55,7 @@ export const useUpdateTicket = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, ticket }: { id: number; ticket: Partial<Ticket> }) =>
-      ticketService.updateTicket(id, { ...ticket, id }),
+    mutationFn: (ticket: Partial<Ticket>) => ticketService.update(ticket),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ticketKeys.lists() });
       queryClient.invalidateQueries({
@@ -70,7 +70,7 @@ export const useDeleteTicket = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ticketService.deleteTicket,
+    mutationFn: ticketService.delete,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ticketKeys.lists() });
       queryClient.invalidateQueries({ queryKey: ticketKeys.stats() });

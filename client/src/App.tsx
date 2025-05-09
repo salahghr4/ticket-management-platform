@@ -8,6 +8,7 @@ import PrivateRoutes from "@/routes/PrivateRoutes";
 import PublicRoutes from "@/routes/PublicRoutes";
 import Tickets from "@/pages/Tickets";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import CreateTicket from "@/pages/CreateTicket";
 
 function App() {
   const { isLoading } = useAuth();
@@ -40,6 +41,10 @@ function App() {
             <Route
               path="/tickets"
               element={<Tickets />}
+            />
+            <Route
+              path="/tickets/create"
+              element={<CreateTicket />}
             />
             <Route
               path="/users"

@@ -13,7 +13,7 @@ const Tickets = () => {
       <div className="w-[95%] space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center gap-3">
-            <TicketIcon className="h-8 w-8 text-primary" />
+            <TicketIcon className="h-8 w-8 text-primary dark:text-primary-foreground" />
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold">Tickets</h1>
               <p className="text-muted-foreground text-sm sm:text-base">

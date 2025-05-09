@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -20,5 +21,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('tickets/stats', [TicketController::class, 'stats'])->name('tickets.stats');
     Route::apiResource('tickets', TicketController::class);
     Route::apiResource('users', UserController::class);
+
+    Route::get('users/department/{departmentId}', [UserController::class, 'department'])->name('users.department');
+    Route::apiResource('departments', DepartmentController::class);
 });
 

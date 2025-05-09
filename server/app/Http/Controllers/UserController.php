@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Department;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -83,5 +84,17 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json(['message' => 'User deleted']);
+    }
+
+    public function department(string $departmentId)
+    {
+        $department = Department::find($departmentId);
+
+        if (!$department) {
+            return response()->json(['message' => 'Department not found'], 404);
+        }
+
+        $users = User::where('department_id', $departmentId)->get();
+        return response()->json($users);
     }
 }

@@ -13,7 +13,7 @@ const AppHeader = () => {
           <SidebarTrigger className="-ml-1" />
           <Separator
             orientation="vertical"
-            className="mx-2 data-[orientation=vertical]:h-4"
+            className="mx-2 data-[orientation=vertical]:h-4 dark:data-[orientation=vertical]:bg-primary-foreground"
           />
           <h1 className="text-base font-medium">
             {title.charAt(0).toUpperCase() + title.slice(1)}

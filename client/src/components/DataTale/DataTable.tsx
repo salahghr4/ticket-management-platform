@@ -8,7 +8,7 @@ import {
   getSortedRowModel,
   SortingState,
   useReactTable,
-  VisibilityState
+  VisibilityState,
 } from "@tanstack/react-table";
 import {
   ChevronDown,
@@ -16,7 +16,7 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-  MoreHorizontal
+  MoreHorizontal,
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
@@ -50,6 +50,7 @@ import DataTableFilters from "./DataTableFilters";
 import { DataTableSkeleton } from "./DataTableSkeleton";
 import PriorityBadge from "./PriorityBadge";
 import StatusBadge from "./StatusBadge";
+import { addDays } from "date-fns";
 
 export default function DataTable({
   data,
@@ -77,12 +78,9 @@ export default function DataTable({
           : "open";
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { updated_at, user, assignee, department, ...rest } = ticket;
-      const ticketData = {
-        id: ticket.id,
-        ticket: {
-          ...rest,
-          status: newStatus as Ticket["status"],
-        },
+      const ticketData: Partial<Ticket> = {
+        ...rest,
+        status: newStatus as Ticket["status"],
       };
 
       try {
@@ -245,7 +243,9 @@ export default function DataTable({
             const [from, to] = value;
             const minDate = from ?? new Date().getTime();
             const maxDate = to ?? new Date().getTime();
-            return date.getTime() >= minDate && date.getTime() <= maxDate;
+            return (
+              date.getTime() >= minDate && date.getTime() <= addDays(maxDate, 1)
+            );
           }
           return date.getTime() >= value;
         },
