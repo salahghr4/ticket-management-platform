@@ -380,9 +380,9 @@ export default function DataTable({
       </div>
       <div className="rounded-md border">
         <Table>
-          <TableHeader className="bg-primary/30">
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className="sticky top-0 z-10 bg-muted/50">
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>

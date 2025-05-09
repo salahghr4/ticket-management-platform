@@ -6,7 +6,7 @@ import { Plus, RefreshCw, Ticket as TicketIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Tickets = () => {
-  const { data: ticketsData, isLoading, refetch } = useTickets();
+  const { data: ticketsData, isLoading, refetch, isFetching } = useTickets();
 
   return (
     <div className="min-h-screen w-full flex justify-center px-4 py-6">
@@ -25,11 +25,11 @@ const Tickets = () => {
             <Button
               variant="outline"
               onClick={() => refetch()}
-              disabled={isLoading}
+              disabled={isLoading || isFetching}
               className="flex-1 sm:flex-none"
             >
               <RefreshCw
-                className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+                className={`mr-2 h-4 w-4 ${isLoading || isFetching ? "animate-spin" : ""}`}
               />
               Refresh
             </Button>
@@ -45,7 +45,7 @@ const Tickets = () => {
           </div>
         </div>
 
-        <Card className="shadow-lg">
+        <Card>
           <CardHeader className="border-b">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <CardTitle>All Tickets</CardTitle>
@@ -54,7 +54,7 @@ const Tickets = () => {
           <CardContent className="px-6">
             <DataTable
               data={ticketsData?.tickets || []}
-              isLoading={isLoading}
+              isLoading={isLoading || isFetching}
             />
           </CardContent>
         </Card>

@@ -1,3 +1,4 @@
+import Loader from "@/components/Logo/Loader";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -63,8 +64,11 @@ export default function CreateTicket() {
   const navigate = useNavigate();
   const { mutateAsync: createTicket, isPending } = useCreateTicket();
   const { user } = useAuth();
-  const { data: departments } = useDepartments();
-  const { data: users } = useUsers();
+  const { data: departments, isLoading: departmentsLoading } = useDepartments();
+  const { data: users, isLoading: usersLoading } = useUsers();
+
+  const isLoading = departmentsLoading || usersLoading;
+
   const form = useForm<TicketFormValues>({
     resolver: zodResolver(ticketSchema),
     defaultValues: {
@@ -96,6 +100,10 @@ export default function CreateTicket() {
       })) || []
   );
 
+  if (isLoading) {
+    return <Loader />;
+  }
+
   async function onSubmit(data: TicketFormValues) {
     toast.promise(createTicket(data), {
       loading: "Creating ticket...",
@@ -117,7 +125,6 @@ export default function CreateTicket() {
               variant="ghost"
               size="icon"
               onClick={() => navigate("/tickets")}
-              className="hover:bg-background/80"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -296,16 +303,18 @@ export default function CreateTicket() {
                                       !field.value && "text-muted-foreground"
                                     )}
                                   >
-                                    {field.value
-                                      ? (
-                                        <div className="flex items-center gap-2">
-                                          <User />
-                                          {filteredUsers.find(
+                                    {field.value ? (
+                                      <div className="flex items-center gap-2">
+                                        <User />
+                                        {
+                                          filteredUsers.find(
                                             (user) => user.value === field.value
-                                          )?.label}
-                                        </div>
-                                      )
-                                      : "Select user to assign..."}
+                                          )?.label
+                                        }
+                                      </div>
+                                    ) : (
+                                      "Select user to assign..."
+                                    )}
                                     <ChevronsUpDown className="opacity-50" />
                                   </Button>
                                 </FormControl>
@@ -336,7 +345,9 @@ export default function CreateTicket() {
                                           <div className="flex items-center gap-2">
                                             <Avatar>
                                               <AvatarFallback className="bg-primary text-primary-foreground dark:bg-primary-foreground dark:text-primary">
-                                                {user.label.slice(0, 2).toLocaleUpperCase()}
+                                                {user.label
+                                                  .slice(0, 2)
+                                                  .toLocaleUpperCase()}
                                               </AvatarFallback>
                                             </Avatar>
                                             <div className="flex flex-col">
