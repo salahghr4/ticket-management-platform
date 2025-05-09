@@ -3,7 +3,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { Ticket } from "@/types/tickets";
 import { Column, Table } from "@tanstack/react-table";
@@ -18,11 +22,17 @@ import {
   CirclePlus,
   CircleX,
   Timer,
+  XCircle,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
-const DataTableFilters = ({ table, data }: { table: Table<Ticket>, data: Ticket[] }) => {
-
+const DataTableFilters = ({
+  table,
+  data,
+}: {
+  table: Table<Ticket>;
+  data: Ticket[];
+}) => {
   const [statusPopoverOpen, setStatusPopoverOpen] = useState(false);
   const [priorityPopoverOpen, setPriorityPopoverOpen] = useState(false);
   const [departmentPopoverOpen, setDepartmentPopoverOpen] = useState(false);
@@ -108,9 +118,12 @@ const DataTableFilters = ({ table, data }: { table: Table<Ticket>, data: Ticket[
       icon: <ArrowUp className="h-4 w-4 text-gray-500" />,
     },
   ];
-  const selectedStatuses = (table.getColumn("status")?.getFilterValue() as string[]) || [];
-  const selectedPriorities = (table.getColumn("priority")?.getFilterValue() as string[]) || [];
-  const selectedDepartments = (table.getColumn("department")?.getFilterValue() as string[]) || [];
+  const selectedStatuses =
+    (table.getColumn("status")?.getFilterValue() as string[]) || [];
+  const selectedPriorities =
+    (table.getColumn("priority")?.getFilterValue() as string[]) || [];
+  const selectedDepartments =
+    (table.getColumn("department")?.getFilterValue() as string[]) || [];
 
   return (
     <div className="flex items-center gap-2 flex-wrap flex-1">
@@ -135,9 +148,21 @@ const DataTableFilters = ({ table, data }: { table: Table<Ticket>, data: Ticket[
             // size="sm"
           >
             {selectedStatuses.length > 0 ? (
-              <CircleX className="h-4 w-4" />
+              <div
+                role="button"
+                aria-label={`Clear Status filter`}
+                tabIndex={0}
+                onClick={(e) => {
+                  e.preventDefault();
+                  table.getColumn("status")?.setFilterValue(undefined);
+                  setStatusPopoverOpen(false);
+                }}
+                className="rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              >
+                <XCircle />
+              </div>
             ) : (
-              <CirclePlus className="h-4 w-4" />
+              <CirclePlus />
             )}
             Status
             {selectedStatuses.length > 0 && (
@@ -171,12 +196,12 @@ const DataTableFilters = ({ table, data }: { table: Table<Ticket>, data: Ticket[
             <label
               key={status.value}
               htmlFor={status.value}
-              className="flex items-center gap-4 px-2 rounded-sm text-sm hover:bg-accent cursor-pointer py-1.5 overflow-y-auto overflow-x-hidden"
+              className="group flex items-center gap-4 px-2 rounded-sm text-sm hover:bg-accent cursor-pointer py-1.5 overflow-y-auto overflow-x-hidden"
             >
               <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id={status.value}
-                  className="border-gray-400"
+                  className="border-gray-400 group-hover:border-gray-500"
                   checked={(
                     (table.getColumn("status")?.getFilterValue() as string[]) ||
                     []
@@ -194,7 +219,7 @@ const DataTableFilters = ({ table, data }: { table: Table<Ticket>, data: Ticket[
                     table
                       .getColumn("status")
                       ?.setFilterValue(
-                        newFilterValues.length > 0 ? newFilterValues : null
+                        newFilterValues.length > 0 ? newFilterValues : undefined
                       );
                   }}
                 />
@@ -213,7 +238,7 @@ const DataTableFilters = ({ table, data }: { table: Table<Ticket>, data: Ticket[
             variant="ghost"
             className="w-full"
             onClick={() => {
-              table.getColumn("status")?.setFilterValue(null);
+              table.getColumn("status")?.setFilterValue(undefined);
               setStatusPopoverOpen(false);
             }}
           >
@@ -233,9 +258,20 @@ const DataTableFilters = ({ table, data }: { table: Table<Ticket>, data: Ticket[
             // size="sm"
           >
             {selectedPriorities.length > 0 ? (
-              <CircleX className="h-4 w-4" />
+              <div
+                role="button"
+                aria-label={`Clear Priority filter`}
+                tabIndex={0}
+                onClick={(e) => {
+                  e.preventDefault();
+                  table.getColumn("priority")?.setFilterValue(undefined);
+                  setPriorityPopoverOpen(false);
+                }}
+              >
+                <XCircle />
+              </div>
             ) : (
-              <CirclePlus className="h-4 w-4" />
+              <CirclePlus />
             )}
             Priority
             {selectedPriorities.length > 0 && (
@@ -263,12 +299,12 @@ const DataTableFilters = ({ table, data }: { table: Table<Ticket>, data: Ticket[
             <label
               htmlFor={priority.value}
               key={priority.value}
-              className="flex items-center gap-4 px-2 rounded-sm text-sm hover:bg-accent cursor-pointer py-1.5 overflow-y-auto overflow-x-hidden"
+              className="group flex items-center gap-4 px-2 rounded-sm text-sm hover:bg-accent cursor-pointer py-1.5 overflow-y-auto overflow-x-hidden"
             >
               <div className="flex items-center gap-2 cursor-pointer">
                 <Checkbox
                   id={priority.value}
-                  className="border-gray-400"
+                  className="border-gray-400 group-hover:border-gray-500"
                   checked={(
                     (table
                       .getColumn("priority")
@@ -287,7 +323,7 @@ const DataTableFilters = ({ table, data }: { table: Table<Ticket>, data: Ticket[
                     table
                       .getColumn("priority")
                       ?.setFilterValue(
-                        newFilterValues.length > 0 ? newFilterValues : null
+                        newFilterValues.length > 0 ? newFilterValues : undefined
                       );
                   }}
                 />
@@ -301,7 +337,7 @@ const DataTableFilters = ({ table, data }: { table: Table<Ticket>, data: Ticket[
             variant="ghost"
             className="w-full"
             onClick={() => {
-              table.getColumn("priority")?.setFilterValue(null);
+              table.getColumn("priority")?.setFilterValue(undefined);
               setPriorityPopoverOpen(false);
             }}
           >
@@ -319,11 +355,22 @@ const DataTableFilters = ({ table, data }: { table: Table<Ticket>, data: Ticket[
             variant="outline"
             className="border-dashed"
             // size="sm"
-          >
+          > 
             {selectedDepartments.length > 0 ? (
-              <CircleX className="h-4 w-4" />
+              <div
+                role="button"
+                aria-label={`Clear Department filter`}
+                tabIndex={0}
+                onClick={(e) => {
+                  e.preventDefault();
+                  table.getColumn("department")?.setFilterValue(undefined);
+                  setDepartmentPopoverOpen(false);
+                }}
+              >
+                <XCircle />
+              </div>
             ) : (
-              <CirclePlus className="h-4 w-4" />
+              <CirclePlus />
             )}
             Department
             {selectedDepartments.length > 0 && (
@@ -357,11 +404,11 @@ const DataTableFilters = ({ table, data }: { table: Table<Ticket>, data: Ticket[
             <label
               key={department.name}
               htmlFor={department.name}
-              className="flex items-center gap-4 px-2 rounded-sm text-sm hover:bg-accent cursor-pointer py-1.5 overflow-y-auto overflow-x-hidden"
+              className="group flex items-center gap-4 px-2 rounded-sm text-sm hover:bg-accent cursor-pointer py-1.5 overflow-y-auto overflow-x-hidden"
             >
               <Checkbox
                 id={department.name}
-                className="border-gray-400"
+                className="border-gray-400 group-hover:border-gray-500"
                 checked={(
                   (table
                     .getColumn("department")
@@ -380,7 +427,7 @@ const DataTableFilters = ({ table, data }: { table: Table<Ticket>, data: Ticket[
                   table
                     .getColumn("department")
                     ?.setFilterValue(
-                      newFilterValues.length > 0 ? newFilterValues : null
+                      newFilterValues.length > 0 ? newFilterValues : undefined
                     );
                 }}
               />
@@ -392,7 +439,7 @@ const DataTableFilters = ({ table, data }: { table: Table<Ticket>, data: Ticket[
             variant="ghost"
             className="w-full"
             onClick={() => {
-              table.getColumn("department")?.setFilterValue(null);
+              table.getColumn("department")?.setFilterValue(undefined);
               setDepartmentPopoverOpen(false);
             }}
           >
@@ -407,10 +454,10 @@ const DataTableFilters = ({ table, data }: { table: Table<Ticket>, data: Ticket[
         multiple={true}
       />
       {/* reset fliters button */}
-      {(table.getColumn("status")?.getFilterValue() !== null ||
-        table.getColumn("priority")?.getFilterValue() !== null ||
-        table.getColumn("department")?.getFilterValue() !== null ||
-        table.getColumn("created_at")?.getFilterValue() !== null) && (
+      {(table.getColumn("status")?.getFilterValue() !== undefined ||
+        table.getColumn("priority")?.getFilterValue() !== undefined ||
+        table.getColumn("department")?.getFilterValue() !== undefined ||
+        table.getColumn("created_at")?.getFilterValue() !== undefined) && (
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -418,10 +465,10 @@ const DataTableFilters = ({ table, data }: { table: Table<Ticket>, data: Ticket[
               // size="sm"
               className="border-dashed"
               onClick={() => {
-                table.getColumn("status")?.setFilterValue(null);
-                table.getColumn("priority")?.setFilterValue(null);
-                table.getColumn("department")?.setFilterValue(null);
-                table.getColumn("created_at")?.setFilterValue(null);
+                table.getColumn("status")?.setFilterValue(undefined);
+                table.getColumn("priority")?.setFilterValue(undefined);
+                table.getColumn("department")?.setFilterValue(undefined);
+                table.getColumn("created_at")?.setFilterValue(undefined);
               }}
             >
               <CircleX className="h-4 w-4" />

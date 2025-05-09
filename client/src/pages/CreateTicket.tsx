@@ -82,6 +82,8 @@ export default function CreateTicket() {
     {
       value: number;
       label: string;
+      email: string;
+      searchValue: string;
     }[]
   >(
     users
@@ -89,6 +91,8 @@ export default function CreateTicket() {
       .map((user) => ({
         value: user.id,
         label: user.name,
+        email: user.email,
+        searchValue: user.name + user.email,
       })) || []
   );
 
@@ -238,6 +242,8 @@ export default function CreateTicket() {
                                     .map((user) => ({
                                       value: user.id,
                                       label: user.name,
+                                      email: user.email,
+                                      searchValue: user.name + user.email,
                                     })) || []
                                 );
                               }}
@@ -315,7 +321,7 @@ export default function CreateTicket() {
                                     <CommandGroup>
                                       {filteredUsers.map((user) => (
                                         <CommandItem
-                                          value={user.label}
+                                          value={user.searchValue}
                                           key={user.value}
                                           onSelect={() => {
                                             form.setValue(
@@ -333,7 +339,14 @@ export default function CreateTicket() {
                                                 {user.label.slice(0, 2).toLocaleUpperCase()}
                                               </AvatarFallback>
                                             </Avatar>
-                                            {user.label}
+                                            <div className="flex flex-col">
+                                              <span className="text-sm font-medium">
+                                                {user.label}
+                                              </span>
+                                              <span className="text-xs text-muted-foreground font-medium">
+                                                {user.email}
+                                              </span>
+                                            </div>
                                           </div>
                                           <Check
                                             className={cn(

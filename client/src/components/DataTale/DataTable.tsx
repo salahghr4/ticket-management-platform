@@ -11,12 +11,12 @@ import {
   VisibilityState,
 } from "@tanstack/react-table";
 import {
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
   MoreHorizontal,
+  Settings2
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
@@ -43,6 +43,7 @@ import { useUpdateTicket } from "@/hooks/useTickets";
 import { formatDate } from "@/lib/format";
 import { User } from "@/types/auth";
 import { Ticket } from "@/types/tickets";
+import { addDays } from "date-fns";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import DataTableColumnHeader from "./DataTableColumnHeader";
@@ -50,7 +51,6 @@ import DataTableFilters from "./DataTableFilters";
 import { DataTableSkeleton } from "./DataTableSkeleton";
 import PriorityBadge from "./PriorityBadge";
 import StatusBadge from "./StatusBadge";
-import { addDays } from "date-fns";
 
 export default function DataTable({
   data,
@@ -351,10 +351,13 @@ export default function DataTable({
               variant="outline"
               className="border-dashed self-baseline"
             >
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
+              <Settings2 className="h-4 w-4" />
+              View
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+            <DropdownMenuSeparator />
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
