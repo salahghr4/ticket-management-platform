@@ -4,7 +4,7 @@ export type Ticket = {
   id: number;
   title: string;
   description: string;
-  department_id: number | null;
+  department_id: number;
   user_id: number;
   assigned_to: number | null;
   status: "open" | "in progress" | "resolved" | "closed" | "rejected";

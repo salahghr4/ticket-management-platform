@@ -6,7 +6,7 @@ export const ticketSchema = z.object({
   priority: z.enum(["low", "medium", "high"]),
   status: z.enum(["open", "in progress", "resolved", "closed", "rejected"]),
   department_id: z.number(),
-  assigned_to: z.number().optional(),
+  assigned_to: z.number().nullable(),
   due_date: z.date().optional(),
 });
 
