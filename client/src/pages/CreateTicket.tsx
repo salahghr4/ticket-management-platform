@@ -77,7 +77,7 @@ export default function CreateTicket() {
       priority: "medium",
       status: "open",
       department_id: user?.department_id || 1,
-      assigned_to: undefined,
+      assigned_to: null,
       due_date: undefined,
     },
   });
@@ -253,6 +253,7 @@ export default function CreateTicket() {
                                       searchValue: user.name + user.email,
                                     })) || []
                                 );
+                                form.setValue("assigned_to", null);
                               }}
                               value={field.value?.toString()}
                             >
@@ -336,7 +337,7 @@ export default function CreateTicket() {
                                             form.setValue(
                                               "assigned_to",
                                               user.value === field.value
-                                                ? undefined
+                                                ? null
                                                 : user.value
                                             );
                                             setOpenPopover(false);
