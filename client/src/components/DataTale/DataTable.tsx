@@ -16,7 +16,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
   MoreHorizontal,
-  Settings2
+  Settings2,
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
@@ -44,7 +44,7 @@ import { formatDate } from "@/lib/format";
 import { User } from "@/types/auth";
 import { Ticket } from "@/types/tickets";
 import { addDays } from "date-fns";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import DataTableColumnHeader from "./DataTableColumnHeader";
 import DataTableFilters from "./DataTableFilters";
@@ -65,6 +65,7 @@ export default function DataTable({
   const [rowSelection, setRowSelection] = useState({});
 
   const { mutateAsync: updateTicket } = useUpdateTicket();
+  const navigate = useNavigate();
 
   const handleStatusChange = useCallback(
     (ticket: Ticket) => {
@@ -279,23 +280,26 @@ export default function DataTable({
                   Copy ticket ID
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Link
-                    to={`/tickets/${ticket.id}`}
-                    className="cursor-pointer"
-                  >
-                    View details
-                  </Link>
+                <DropdownMenuItem
+                  onClick={() => {
+                    navigate(`/tickets/${ticket.id}`);
+                  }}
+                  className="cursor-pointer"
+                >
+                  View details
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link
-                    to={`/tickets/${ticket.id}/edit`}
-                    className="cursor-pointer"
-                  >
-                    Edit ticket
-                  </Link>
+                <DropdownMenuItem
+                  onClick={() => {
+                    navigate(`/tickets/${ticket.id}/edit`);
+                  }}
+                  className="cursor-pointer"
+                >
+                  Edit ticket
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleStatusChange(ticket)}>
+                <DropdownMenuItem
+                  onClick={() => handleStatusChange(ticket)}
+                  className="cursor-pointer"
+                >
                   Mark as{" "}
                   {ticket.status === "open"
                     ? "in progress"
@@ -311,7 +315,7 @@ export default function DataTable({
         },
       },
     ],
-    [handleStatusChange]
+    [handleStatusChange, navigate]
   );
 
   const table = useReactTable({
@@ -382,7 +386,10 @@ export default function DataTable({
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="sticky top-0 z-10 bg-muted/50">
+              <TableRow
+                key={headerGroup.id}
+                className="sticky top-0 z-10 bg-muted/50"
+              >
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>
