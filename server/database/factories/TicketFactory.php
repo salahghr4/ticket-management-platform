@@ -21,14 +21,17 @@ class TicketFactory extends Factory
      */
     public function definition(): array
     {
+        $department = Department::inRandomOrder()->first() ?? Department::factory();
+        $assigned_to = User::inRandomOrder()->where('department_id', $department->id)->first() ?? User::factory()->create(['department_id' => $department->id]);
+        $user = User::inRandomOrder()->where('department_id', $department->id)->first() ?? User::factory()->create(['department_id' => $department->id]);
         return [
             'title' => $this->faker->sentence(),
             'description' => $this->faker->paragraph(),
             'status' => $this->faker->randomElement(['open', 'in progress', 'resolved', 'closed', 'rejected']),
             'priority' => $this->faker->randomElement(['low', 'medium', 'high']),
-            'user_id' => User::inRandomOrder()->first()->id ?? User::factory(),
-            'department_id' => Department::inRandomOrder()->first()->id ?? Department::factory(),
-            'assigned_to' => User::inRandomOrder()->first()->id ?? User::factory(),
+            'user_id' => $user->id,
+            'department_id' => $department->id,
+            'assigned_to' => $assigned_to->id,
             'due_date' => $this->faker->dateTimeBetween('now', '+1 month'),
             'created_at' => $this->faker->dateTimeBetween('-2 months', 'now'),
         ];
