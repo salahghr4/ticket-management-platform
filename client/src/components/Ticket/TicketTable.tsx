@@ -56,6 +56,14 @@ const TicketTable = ({ data, isLoading }: TicketTableProps) => {
       isLoading={isLoading}
       columns={columns}
       dataFor="tickets"
+      filterConfig={{
+        showSearch: true,
+        showStatus: true,
+        showPriority: true,
+        showDepartment: true,
+        showDateFilter: true,
+        searchField: "title"
+      }}
     />
   );
 };

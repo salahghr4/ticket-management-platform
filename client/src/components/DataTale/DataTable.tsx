@@ -14,7 +14,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
-  ChevronsRight
+  ChevronsRight,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -27,25 +27,37 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Ticket } from "@/types/tickets";
 import DataTableFilters from "./DataTableFilters";
 import { DataTableSkeleton } from "./DataTableSkeleton";
 
-export default function DataTable({
+interface FilterConfig {
+  showStatus?: boolean;
+  showPriority?: boolean;
+  showDepartment?: boolean;
+  showDateFilter?: boolean;
+  showSearch?: boolean;
+  searchField?: string;
+}
+
+interface DataTableProps<T> {
+  data: T[];
+  isLoading?: boolean;
+  columns: ColumnDef<T>[];
+  dataFor: string;
+  filterConfig?: FilterConfig;
+}
+
+export default function DataTable<T extends object>({
   data,
   isLoading = false,
   columns,
   dataFor = "data",
-}: {
-  data: Ticket[];
-  isLoading?: boolean;
-  columns: ColumnDef<Ticket>[];
-  dataFor: string;
-}) {
+  filterConfig
+}: DataTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = useState({});  
+  const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
     data,
@@ -76,6 +88,7 @@ export default function DataTable({
         <DataTableFilters
           table={table}
           data={data}
+          filterConfig={filterConfig}
         />
       </div>
       <div className="rounded-md border">

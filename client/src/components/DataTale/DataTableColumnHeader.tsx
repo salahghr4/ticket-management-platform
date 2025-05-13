@@ -1,14 +1,13 @@
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Column } from "@tanstack/react-table";
-import { Ticket } from "@/types/tickets";
-import { ChevronUp, ChevronDown, X, EyeOff, ChevronsUpDown } from "lucide-react";
+import { ChevronDown, ChevronsUpDown, ChevronUp, EyeOff, X } from "lucide-react";
 
-const DataTableColumnHeader = ({
+const DataTableColumnHeader = <T extends object>({
   column,
   header,
 }: {
-  column: Column<Ticket>;
+  column: Column<T>;
   header: string;
 }) => {
   return (
