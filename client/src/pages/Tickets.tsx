@@ -1,4 +1,4 @@
-import DataTable from "@/components/DataTale/DataTable";
+import TicketTable from "@/components/Ticket/TicketTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTickets } from "@/hooks/useTickets";
@@ -29,7 +29,9 @@ const Tickets = () => {
               className="flex-1 sm:flex-none"
             >
               <RefreshCw
-                className={`mr-2 h-4 w-4 ${isLoading || isFetching ? "animate-spin" : ""}`}
+                className={`mr-2 h-4 w-4 ${
+                  isLoading || isFetching ? "animate-spin" : ""
+                }`}
               />
               Refresh
             </Button>
@@ -52,7 +54,7 @@ const Tickets = () => {
             </div>
           </CardHeader>
           <CardContent className="px-6">
-            <DataTable
+            <TicketTable
               data={ticketsData?.tickets || []}
               isLoading={isLoading || isFetching}
             />
