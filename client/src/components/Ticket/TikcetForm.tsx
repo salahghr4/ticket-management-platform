@@ -34,8 +34,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/hooks/useAuth";
 import { useDepartments } from "@/hooks/useDepartments";
-import { useUpdateTicket } from "@/hooks/useTickets";
+import { useCreateTicket, useUpdateTicket } from "@/hooks/useTickets";
 import { useUsers } from "@/hooks/useUsers";
 import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -56,7 +57,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 interface TicketFormProps {
-  ticket: Ticket;
+  ticket?: Ticket;
 }
 
 interface FilteredUsers {
@@ -71,21 +72,36 @@ interface FilteredDepartments {
   label: string;
 }
 
-const TicketEditForm = ({ ticket }: TicketFormProps) => {
+const TicketForm = ({ ticket }: TicketFormProps) => {
   const [openPopover, setOpenPopover] = useState(false);
   const [dueDatePopover, setDueDatePopover] = useState(false);
   const [openDepartmentPopover, setOpenDepartmentPopover] = useState(false);
-  const navigate = useNavigate();
-  const { mutateAsync: updateTicket, isPending } = useUpdateTicket();
+  const [filteredUsers, setFilteredUsers] = useState<FilteredUsers[]>([]);
+  const [filteredDepartments, setFilteredDepartments] = useState<FilteredDepartments[]>([]);
+  const { mutateAsync: updateTicket, isPending: updateLoading } = useUpdateTicket();
+  const { mutateAsync: createTicket, isPending: createLoading } = useCreateTicket();
   const { data: departments, isLoading: departmentsLoading } = useDepartments();
   const { data: users, isLoading: usersLoading } = useUsers();
-  const [filteredUsers, setFilteredUsers] = useState<FilteredUsers[]>([]);
-  const [filteredDepartments, setFilteredDepartments] = useState<
-    FilteredDepartments[]
-  >([]);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const isLoading = departmentsLoading || usersLoading;
+
+  const form = useForm<TicketFormValues>({
+    resolver: zodResolver(ticketSchema),
+    defaultValues: {
+      title: ticket?.title || "",
+      description: ticket?.description || "",
+      priority: ticket?.priority || "low",
+      status: ticket?.status || "open",
+      department_id: ticket?.department_id || user?.department_id || 1,
+      assigned_to: ticket?.assigned_to || null,
+      due_date: ticket?.due_date ? new Date(ticket.due_date) : undefined,
+    },
+  });
 
   useEffect(() => {
-    if (users && departments && ticket.department_id) {
+    if (users && departments && ticket?.department_id) {
       setFilteredUsers(
         users
           .filter((user) => user.department_id === ticket.department_id)
@@ -96,43 +112,52 @@ const TicketEditForm = ({ ticket }: TicketFormProps) => {
             searchValue: user.name + user.email,
           }))
       );
-      setFilteredDepartments(
-        departments.map((department) => ({
-          value: department.id,
-          label: department.name,
-        }))
+    } else {
+      setFilteredUsers(
+        users
+          ?.filter(
+            (user) => user.department_id === form.getValues("department_id")
+          )
+          .map((user) => ({
+            value: user.id,
+            label: user.name,
+            email: user.email,
+            searchValue: user.name + user.email,
+          })) || []
       );
     }
-  }, [users, departments, ticket.department_id]);
-
-  const isLoading = departmentsLoading || usersLoading;
-
-  const form = useForm<TicketFormValues>({
-    resolver: zodResolver(ticketSchema),
-    defaultValues: {
-      title: ticket.title,
-      description: ticket.description,
-      priority: ticket.priority,
-      status: ticket.status,
-      department_id: ticket.department_id || undefined,
-      assigned_to: ticket.assigned_to || null,
-      due_date: ticket.due_date ? new Date(ticket.due_date) : undefined,
-    },
-  });
+    setFilteredDepartments(
+      departments?.map((department) => ({
+        value: department.id,
+        label: department.name,
+      })) || []
+    );
+  }, [users, departments, ticket?.department_id, form]);
 
   if (isLoading) {
     return <Loader />;
   }
 
   async function onSubmit(data: TicketFormValues) {
-    toast.promise(updateTicket({ ...data, id: ticket.id }), {
-      loading: "Updating ticket...",
-      success: () => {
-        navigate(`/tickets/${ticket.id}`);
-        return "Ticket updated successfully!";
-      },
-      error: "Failed to update ticket. Please try again.",
-    });
+    if (ticket) {
+      toast.promise(updateTicket({ ...data, id: ticket.id }), {
+        loading: "Updating ticket...",
+        success: () => {
+          navigate(`/tickets/${ticket.id}`);
+          return "Ticket updated successfully!";
+        },
+        error: "Failed to update ticket. Please try again.",
+      });
+    } else {
+      toast.promise(createTicket(data), {
+        loading: "Creating ticket...",
+        success: () => {
+          navigate("/tickets");
+          return "Ticket created successfully!";
+        },
+        error: "Failed to create ticket. Please try again.",
+      });
+    }
   }
 
   return (
@@ -248,8 +273,8 @@ const TicketEditForm = ({ ticket }: TicketFormProps) => {
                               In Progress
                             </SelectItem>
                             <SelectItem value="resolved">Resolved</SelectItem>
-                            <SelectItem value="closed">Closed</SelectItem>
                             <SelectItem value="rejected">Rejected</SelectItem>
+                            <SelectItem value="closed">Closed</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -522,13 +547,19 @@ const TicketEditForm = ({ ticket }: TicketFormProps) => {
         <Button
           type="submit"
           className="w-full h-12 text-base"
-          disabled={isPending}
+          disabled={updateLoading || createLoading}
         >
-          {isPending ? "Updating..." : "Update Ticket"}
+          {updateLoading || createLoading
+            ? ticket
+              ? "Updating..."
+              : "Creating..."
+            : ticket
+            ? "Update Ticket"
+            : "Create Ticket"}
         </Button>
       </form>
     </Form>
   );
 };
 
-export default TicketEditForm;
+export default TicketForm;

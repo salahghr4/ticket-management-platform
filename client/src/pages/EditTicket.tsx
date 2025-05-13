@@ -1,6 +1,6 @@
 import Loader from "@/components/Logo/Loader";
-import TicketEditForm from "@/components/Ticket/TicketEditForm";
 import TicketNotFound from "@/components/Ticket/TicketNotFound";
+import TicketForm from "@/components/Ticket/TikcetForm";
 import { Button } from "@/components/ui/button";
 import { useTicket } from "@/hooks/useTickets";
 import {
@@ -42,7 +42,7 @@ const EditTicket = () => {
           </div>
         </div>
 
-        <TicketEditForm ticket={ticketData.ticket} />
+        <TicketForm ticket={ticketData.ticket} />
       </div>
     </div>
   );
