@@ -1,7 +1,7 @@
 import { SectionCards } from "@/components/Cards/SectionCards";
 import { TicketChart } from "@/components/Charts/TicketChart";
 import { TicketPriorityChart } from "@/components/Charts/TicketPriorityChart";
-import DataTable from "@/components/DataTale/DataTable";
+import TicketTable from "@/components/Ticket/TicketTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTicketStats } from "@/hooks/useTickets";
@@ -56,7 +56,7 @@ const Dashboard = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <DataTable
+                <TicketTable
                   data={ticketStats?.tickets || []}
                   isLoading={isLoading}
                 />

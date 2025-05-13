@@ -2,6 +2,7 @@ import { DataTableDateFilter } from "@/components/DataTale/DataTableDateFilter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -23,6 +24,7 @@ import {
   CircleX,
   Timer,
   XCircle,
+  Settings2,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -126,6 +128,7 @@ const DataTableFilters = ({
     (table.getColumn("department")?.getFilterValue() as string[]) || [];
 
   return (
+    <>
     <div className="flex items-center gap-2 flex-wrap flex-1">
       {/* a filter for the title */}
       <Input
@@ -478,6 +481,39 @@ const DataTableFilters = ({
         </Popover>
       )}
     </div>
+    <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              className="border-dashed self-baseline"
+            >
+              <Settings2 className="h-4 w-4" />
+              View
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                );
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+    </>
   );
 };
 
