@@ -12,6 +12,8 @@ import CreateTicket from "@/pages/CreateTicket";
 import TicketDetails from "@/pages/TicketDetails";
 import ProtectedEditTicket from "@/components/Ticket/ProtectedEditTicket";
 import Users from "@/pages/Users";
+import AdminRoutes from "@/routes/AdminRoutes";
+import CreateUser from "@/pages/CreateUser";
 function App() {
   const { isLoading } = useAuth();
 
@@ -39,6 +41,9 @@ function App() {
             <Route path="/tickets/:id" element={<TicketDetails />}/>
             <Route path="/tickets/:id/edit" element={<ProtectedEditTicket />}/>
             <Route path="/users" element={<Users />}/>
+            <Route element={<AdminRoutes />}>
+              <Route path="/admin/users/create" element={<CreateUser />}/>
+            </Route>
           </Route>
         </Route>
       </Routes>

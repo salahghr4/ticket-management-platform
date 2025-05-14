@@ -1,5 +1,6 @@
 import api from "@/lib/api";
 import { User, UserResponse } from "@/types/auth";
+import { UserFormValues } from "@/validation/users";
 
 const UserService = {
   getDepartmentUsers: async (departmentId: number) => {
@@ -16,7 +17,7 @@ const UserService = {
     });
   },
 
-  createUser: async (user: User) => {
+  createUser: async (user: UserFormValues) => {
     return await api<UserResponse>({
       method: "POST",
       url: "/users",

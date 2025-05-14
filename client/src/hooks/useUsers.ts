@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UserService from "@/services/users";
 import { User } from "@/types/auth";
+import { UserFormValues } from "@/validation/users";
 // Query keys
 export const userKeys = {
   all: ["users"] as const,
@@ -36,7 +37,7 @@ export const useCreateUser = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (user: User) => UserService.createUser(user),
+    mutationFn: (user: UserFormValues) => UserService.createUser(user),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.all });
     },
