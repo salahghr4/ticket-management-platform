@@ -14,6 +14,7 @@ import ProtectedEditTicket from "@/components/Ticket/ProtectedEditTicket";
 import Users from "@/pages/Users";
 import AdminRoutes from "@/routes/AdminRoutes";
 import CreateUser from "@/pages/CreateUser";
+import EditUser from "@/pages/EditUser";
 function App() {
   const { isLoading } = useAuth();
 
@@ -43,6 +44,7 @@ function App() {
             <Route path="/users" element={<Users />}/>
             <Route element={<AdminRoutes />}>
               <Route path="/admin/users/create" element={<CreateUser />}/>
+              <Route path="/admin/users/:id/edit" element={<EditUser />}/>
             </Route>
           </Route>
         </Route>

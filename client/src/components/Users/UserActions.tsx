@@ -55,7 +55,7 @@ const UserActions = ({
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
-                  navigate(`/users/${user.id}/edit`);
+                  navigate(`/admin/users/${user.id}/edit`);
                 }}
                 className="cursor-pointer"
               >

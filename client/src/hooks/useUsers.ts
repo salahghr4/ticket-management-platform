@@ -1,7 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UserService from "@/services/users";
-import { User } from "@/types/auth";
-import { UserFormValues } from "@/validation/users";
+import { UserCreateFormValues, UserEditFormValues } from "@/validation/users";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 // Query keys
 export const userKeys = {
   all: ["users"] as const,
@@ -25,6 +24,13 @@ export const useDepartmentUsers = (departmentId: number) => {
   });
 };
 
+export const useUser = (id: number) => {
+  return useQuery({
+    queryKey: userKeys.detail(id),
+    queryFn: () => UserService.getUser(id),
+    enabled: !!id,
+  });
+};
 
 export const useUsers = () => {
   return useQuery({
@@ -37,21 +43,25 @@ export const useCreateUser = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (user: UserFormValues) => UserService.createUser(user),
+    mutationFn: (user: UserCreateFormValues) => UserService.createUser(user),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.all });
     },
   });
 };
 
-export const useUpdateUser = () => {
+export const useUpdateUser = (userId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (user: User) => UserService.updateUser(user),
-    onSuccess: (data) => {
+    mutationFn: async (user: UserEditFormValues) => {
+      const data = await UserService.updateUser(user, userId);
+      console.log(data);
+      return data;
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.all });
-      queryClient.invalidateQueries({ queryKey: userKeys.detail(data.user.id) });
+      queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) });
     },
   });
 };

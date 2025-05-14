@@ -1,16 +1,24 @@
 import Loader from "@/components/Logo/Loader";
 import { Button } from "@/components/ui/button";
-import UserForm from "@/components/Users/UserForm";
+import UserEditForm from "@/components/Users/UserEditForm";
+import UserNotFound from "@/components/Users/UserNotFound";
 import { useDepartments } from "@/hooks/useDepartments";
+import { useUser } from "@/hooks/useUsers";
 import { ArrowLeft, UserIcon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const CreateUser = () => {
+const EditUser = () => {
+  const { id } = useParams();
+  const { data: user, isLoading: userLoading } = useUser(Number(id));
   const { data: departments, isLoading: departmentsLoading } = useDepartments();
   const navigate = useNavigate();
 
-  if (departmentsLoading) {
+  if (departmentsLoading || userLoading) {
     return <Loader />;
+  }
+
+  if (!user) {
+    return <UserNotFound />;
   }
 
   return (
@@ -27,15 +35,18 @@ const CreateUser = () => {
             </Button>
             <div className="flex items-center gap-2">
               <UserIcon className="h-6 w-6 text-primary dark:text-primary-foreground" />
-              <h1 className="text-2xl font-bold">Create New User</h1>
+              <h1 className="text-2xl font-bold">Edit User</h1>
             </div>
           </div>
         </div>
 
-        <UserForm departments={departments || []} />
+        <UserEditForm
+          departments={departments || []}
+          user={user}
+        />
       </div>
     </div>
   );
 };
 
-export default CreateUser;
+export default EditUser;

@@ -29,10 +29,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useCreateUser } from "@/hooks/useUsers";
+import { useUpdateUser } from "@/hooks/useUsers";
 import { cn } from "@/lib/utils";
-import { Department } from "@/types/auth";
-import { UserCreateFormValues, createUserSchema } from "@/validation/users";
+import { Department, User } from "@/types/auth";
+import { UserEditFormValues, updateUserSchema } from "@/validation/users";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Building, Check, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
@@ -40,36 +40,40 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-const UserForm = ({ departments }: { departments: Department[] }) => {
-  const { mutateAsync: createUser, isPending } = useCreateUser();
+const UserEditForm = ({
+  user,
+  departments,
+}: {
+  user: User;
+  departments: Department[];
+}) => {
+  const { mutateAsync: updateUser, isPending: isUpdating } = useUpdateUser(
+    user.id
+  );
   const [openDepartmentPopover, setOpenDepartmentPopover] = useState(false);
   const navigate = useNavigate();
 
-  const form = useForm<UserCreateFormValues>({
-    resolver: zodResolver(createUserSchema),
+  const form = useForm<UserEditFormValues>({
+    resolver: zodResolver(updateUserSchema),
     defaultValues: {
-      name: "",
-      email: "",
+      name: user.name,
+      email: user.email,
       password: "",
       password_confirmation: "",
-      role: "employee",
-      department_id: 1,
+      role: user.role,
+      department_id: user.department_id || undefined,
     },
+    mode: "onBlur",
   });
 
-  async function onSubmit(data: UserCreateFormValues) {
-    toast.promise(createUser(data), {
-      loading: "Creating user...",
+  async function onSubmit(data: UserEditFormValues) {
+    toast.promise(updateUser(data), {
+      loading: "Updating user...",
       success: () => {
         navigate("/users");
-        return (
-          <div className="flex flex-col gap-2">
-            <p>User created successfully!</p>
-            <p>An email has been sent to the user with their credentials.</p>
-          </div>
-        );
+        return "User updated successfully!";
       },
-      error: "Failed to create user. Please try again.",
+      error: "Failed to update user. Please try again.",
     });
   }
 
@@ -125,10 +129,12 @@ const UserForm = ({ departments }: { departments: Department[] }) => {
                   name="password"
                   render={({ field }) => (
                     <FormItem className="flex-1">
-                      <FormLabel className="text-base">Password</FormLabel>
+                      <FormLabel className="text-base">
+                        New Password (Optional)
+                      </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter password"
+                          placeholder="Enter new password"
                           type="password"
                           className="h-12 text-base"
                           {...field}
@@ -145,11 +151,11 @@ const UserForm = ({ departments }: { departments: Department[] }) => {
                   render={({ field }) => (
                     <FormItem className="flex-1">
                       <FormLabel className="text-base">
-                        {"Confirm Password"}
+                        Confirm New Password (Optional)
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Confirm password"
+                          placeholder="Confirm new password"
                           type="password"
                           className="h-12 text-base"
                           {...field}
@@ -279,13 +285,13 @@ const UserForm = ({ departments }: { departments: Department[] }) => {
         <Button
           type="submit"
           className="w-full h-12 text-base"
-          disabled={isPending}
+          disabled={isUpdating}
         >
-          {isPending ? "Creating..." : "Create User"}
+          {isUpdating ? "Updating..." : "Update User"}
         </Button>
       </form>
     </Form>
   );
 };
 
-export default UserForm;
+export default UserEditForm;

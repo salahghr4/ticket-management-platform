@@ -1,4 +1,4 @@
-import axiosClient, { AxiosError, AxiosRequestConfig } from "axios";
+import axiosClient, { AxiosRequestConfig } from "axios";
 import storage from "./storage";
 const axiosInstance = axiosClient.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -29,15 +29,8 @@ axiosInstance.interceptors.response.use(
 );
 
 const api = async <TData>(cfg: AxiosRequestConfig): Promise<TData> => {
-  try {
     const response = await axiosInstance.request<TData>(cfg);
     return response.data as TData;
-  } catch (error) {
-    if (error instanceof AxiosError && error.response) {
-      return error.response.data;
-    }
-    return { message: "An unknown error occurred, please try again later", success: false } as TData;
-  }
 };
 
 export default api;

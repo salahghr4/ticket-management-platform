@@ -61,17 +61,10 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'current_password' => 'nullable|string|min:8',
             'password' => 'nullable|string|min:8|confirmed',
             'role' => ['required', Rule::in(['admin', 'employee', 'manager', 'technician'])],
             'department_id' => 'exists:departments,id',
         ]);
-
-        if (isset($validated['current_password'])) {
-            if (!Hash::check($validated['current_password'], $user->password)) {
-                return response()->json(['message' => 'Current password is incorrect', 'success' => false], 401);
-            }
-        }
 
         if (isset($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
