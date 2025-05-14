@@ -38,7 +38,7 @@ const Users = () => {
           </div>
           {isAdmin && (
             <Link
-              to="/users/create"
+              to="/admin/users/create"
               className="flex-1 sm:flex-none"
             >
               <Button className="w-full">

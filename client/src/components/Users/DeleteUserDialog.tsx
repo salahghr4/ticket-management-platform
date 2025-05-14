@@ -1,23 +1,20 @@
+import { Button } from "@/components/ui/button";
 import {
+  Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
-
-import { Ticket } from "@/types/tickets";
-
-import { Dialog } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-
-const DeleteTicketDialog = ({
-  ticket,
+import { User } from "@/types/auth";
+const DeleteUserDialog = ({
+  user,
   isOpen,
   onOpenChange,
   onDelete,
 }: {
-  ticket: Ticket;
+  user: User;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onDelete: (id: number) => void;
@@ -29,14 +26,14 @@ const DeleteTicketDialog = ({
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete Ticket</DialogTitle>
+          <DialogTitle>Delete User</DialogTitle>
           <DialogDescription className="leading-7">
-            Are you sure you want to delete ticket number{" "}
+            Are you sure you want to delete user{" "}
             <span className="font-bold text-primary dark:text-accent-foreground underline">
-              #{ticket.id}
+              {user.name}
             </span>{" "}
             ? <br />
-            This action cannot be undone.
+            This action cannot be undone. All data associated with this user will be deleted.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -49,7 +46,7 @@ const DeleteTicketDialog = ({
           <Button
             variant="destructive"
             onClick={() => {
-              onDelete(ticket.id);
+              onDelete(user.id);
               onOpenChange(false);
             }}
           >
@@ -61,4 +58,4 @@ const DeleteTicketDialog = ({
   );
 };
 
-export default DeleteTicketDialog;
+export default DeleteUserDialog;

@@ -1,23 +1,24 @@
 import DataTableColumnHeader from "@/components/DataTale/DataTableColumnHeader";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
 import RoleBadge from "@/components/Users/RoleBadge";
+import UserActions from "@/components/Users/UserActions";
 import { formatDate } from "@/lib/format";
 import { User } from "@/types/auth";
 import { ColumnDef } from "@tanstack/react-table";
 import { addDays } from "date-fns";
-import { MoreHorizontal } from "lucide-react";
-import { toast } from "sonner";
+import { NavigateFunction } from "react-router-dom";
 
+interface GetUsersTableColumnsProps {
+  handleDeleteUser: (userId: number) => void;
+  navigate: NavigateFunction;
+  AuthUser: User | null;
+}
 
-const getUsersTableColumns = (): ColumnDef<User>[] => [
+const getUsersTableColumns = ({
+  navigate,
+  handleDeleteUser,
+  AuthUser,
+}: GetUsersTableColumnsProps): ColumnDef<User>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -53,12 +54,16 @@ const getUsersTableColumns = (): ColumnDef<User>[] => [
   {
     accessorKey: "name",
     header: ({ column }) => DataTableColumnHeader({ column, header: "Name" }),
-    cell: ({ row }) => <span className="font-medium">{row.getValue("name")}</span>,
+    cell: ({ row }) => (
+      <span className="font-medium">{row.getValue("name")}</span>
+    ),
   },
   {
     accessorKey: "email",
     header: ({ column }) => DataTableColumnHeader({ column, header: "Email" }),
-    cell: ({ row }) => <span className="font-medium">{row.getValue("email")}</span>,
+    cell: ({ row }) => (
+      <span className="font-medium">{row.getValue("email")}</span>
+    ),
   },
   {
     accessorKey: "role",
@@ -88,8 +93,7 @@ const getUsersTableColumns = (): ColumnDef<User>[] => [
   {
     id: "created_at",
     accessorKey: "created_at",
-    header: ({ column }) =>
-      DataTableColumnHeader({ column, header: "Joined" }),
+    header: ({ column }) => DataTableColumnHeader({ column, header: "Joined" }),
     cell: ({ row }) =>
       row.getValue("created_at")
         ? formatDate(row.getValue("created_at") as string)
@@ -114,36 +118,14 @@ const getUsersTableColumns = (): ColumnDef<User>[] => [
   {
     id: "actions",
     enableHiding: false,
-    cell: ({ row }) => {
-      const user = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="h-8 w-8 p-0"
-            >
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => {
-                navigator.clipboard.writeText(user.email);
-                toast.success("User Email copied to clipboard");
-              }}
-              className="cursor-pointer"
-            >
-              Copy user Email
-            </DropdownMenuItem>
-            {/* <DropdownMenuSeparator /> */}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ({ row }) => (
+      <UserActions
+        user={row.original}
+        navigate={navigate}
+        handleDeleteUser={handleDeleteUser}
+        AuthUser={AuthUser}
+      />
+    ),
   },
 ];
 

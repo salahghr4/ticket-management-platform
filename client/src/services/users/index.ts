@@ -33,7 +33,7 @@ const UserService = {
   },
 
   deleteUser: async (userId: number) => {
-    return await api<Pick<UserResponse, "message" | "success">>({
+    return await api<{ message: string, success: boolean }>({
       method: "DELETE",
       url: `/users/${userId}`,
     });

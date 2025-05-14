@@ -94,18 +94,22 @@ const DataTableFilters = <T extends object>({
     // map over departments and return unique departments
     return data
       .filter(
-        (item): item is T & { role: "admin" | "employee" | "manager" | "technician" } =>
+        (
+          item
+        ): item is T & {
+          role: "admin" | "employee" | "manager" | "technician";
+        } =>
           "role" in item &&
-          (item.role === "admin" || item.role === "employee" || item.role === "manager" || item.role === "technician")
+          (item.role === "admin" ||
+            item.role === "employee" ||
+            item.role === "manager" ||
+            item.role === "technician")
       )
       .map((item) => item.role)
       .filter(
-        (role, index, self) =>
-          index === self.findIndex((t) => t === role)
+        (role, index, self) => index === self.findIndex((t) => t === role)
       );
   }, [data, filterConfig.showRole]);
-
-
 
   const statusOptions = [
     {
@@ -492,9 +496,7 @@ const DataTableFilters = <T extends object>({
                     onCheckedChange={(checked) => {
                       const newFilterValues = checked
                         ? [...selectedRoles, role]
-                        : selectedRoles.filter(
-                            (val) => val !== role
-                          );
+                        : selectedRoles.filter((val) => val !== role);
 
                       table
                         .getColumn("role")
@@ -629,28 +631,51 @@ const DataTableFilters = <T extends object>({
           />
         )}
 
-        {(table.getColumn("status")?.getFilterValue() !== undefined ||
-          table.getColumn("priority")?.getFilterValue() !== undefined ||
-          table.getColumn("department")?.getFilterValue() !== undefined ||
-          table.getColumn("created_at")?.getFilterValue() !== undefined) && (
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className="border-dashed"
-                onClick={() => {
-                  table.getColumn("status")?.setFilterValue(undefined);
-                  table.getColumn("priority")?.setFilterValue(undefined);
-                  table.getColumn("department")?.setFilterValue(undefined);
-                  table.getColumn("created_at")?.setFilterValue(undefined);
-                }}
-              >
-                <CircleX className="h-4 w-4" />
-                Reset
-              </Button>
-            </PopoverTrigger>
-          </Popover>
-        )}
+        {dataFor === "tickets"
+          ? (table.getColumn("status")?.getFilterValue() !== undefined ||
+              table.getColumn("priority")?.getFilterValue() !== undefined ||
+              table.getColumn("department")?.getFilterValue() !== undefined ||
+              table.getColumn("created_at")?.getFilterValue() !==
+                undefined) && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="border-dashed"
+                    onClick={() => {
+                      table.getColumn("status")?.setFilterValue(undefined);
+                      table.getColumn("priority")?.setFilterValue(undefined);
+                      table.getColumn("department")?.setFilterValue(undefined);
+                      table.getColumn("created_at")?.setFilterValue(undefined);
+                    }}
+                  >
+                    <CircleX className="h-4 w-4" />
+                    Reset
+                  </Button>
+                </PopoverTrigger>
+              </Popover>
+            )
+          : (table.getColumn("role")?.getFilterValue() !== undefined ||
+              table.getColumn("department")?.getFilterValue() !== undefined ||
+              table.getColumn("created_at")?.getFilterValue() !==
+                undefined) && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="border-dashed"
+                    onClick={() => {
+                      table.getColumn("role")?.setFilterValue(undefined);
+                      table.getColumn("department")?.setFilterValue(undefined);
+                      table.getColumn("created_at")?.setFilterValue(undefined);
+                    }}
+                  >
+                    <CircleX className="h-4 w-4" />
+                    Reset
+                  </Button>
+                </PopoverTrigger>
+              </Popover>
+            )}
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
