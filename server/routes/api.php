@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('users', UserController::class);
 
     Route::get('users/department/{departmentId}', [UserController::class, 'department'])->name('users.department');
+    Route::apiResource('users', UserController::class);
     Route::apiResource('departments', DepartmentController::class);
 });
 

@@ -31,7 +31,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:8|confirmed',
             'role' => ['required', Rule::in(['admin', 'employee', 'manager', 'technician'])],
             'department_id' => 'exists:departments,id',
         ]);
@@ -40,7 +40,7 @@ class UserController extends Controller
 
         $user = User::create($validated);
 
-        return response()->json($user, 201);
+        return response()->json(['message' => 'User created successfully', 'user' => $user, 'success' => true], 201);
     }
 
     /**
@@ -59,12 +59,19 @@ class UserController extends Controller
         Gate::authorize('update', $user);
 
         $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'email' => ['sometimes', 'email', Rule::unique('users')->ignore($user->id)],
-            'password' => 'sometimes|string|min:8',
-            'role' => ['sometimes', Rule::in(['admin', 'employee', 'manager', 'technician'])],
+            'name' => 'required|string|max:255',
+            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
+            'current_password' => 'nullable|string|min:8',
+            'password' => 'nullable|string|min:8|confirmed',
+            'role' => ['required', Rule::in(['admin', 'employee', 'manager', 'technician'])],
             'department_id' => 'exists:departments,id',
         ]);
+
+        if (isset($validated['current_password'])) {
+            if (!Hash::check($validated['current_password'], $user->password)) {
+                return response()->json(['message' => 'Current password is incorrect', 'success' => false], 401);
+            }
+        }
 
         if (isset($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
@@ -72,7 +79,7 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        return response()->json($user);
+        return response()->json(['message' => 'User updated successfully', 'user' => $user, 'success' => true], 200);
     }
 
     /**
@@ -83,7 +90,7 @@ class UserController extends Controller
         Gate::authorize('delete', $user);
         $user->delete();
 
-        return response()->json(['message' => 'User deleted']);
+        return response()->json(['message' => 'User deleted successfully', 'success' => true], 200);
     }
 
     public function department(string $departmentId)

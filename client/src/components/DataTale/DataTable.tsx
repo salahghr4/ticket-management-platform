@@ -37,6 +37,7 @@ interface FilterConfig {
   showDateFilter?: boolean;
   showSearch?: boolean;
   searchField?: string;
+  showRole?: boolean;
 }
 
 interface DataTableProps<T> {
@@ -89,6 +90,7 @@ export default function DataTable<T extends object>({
           table={table}
           data={data}
           filterConfig={filterConfig}
+          dataFor={dataFor}
         />
       </div>
       <div className="rounded-md border">

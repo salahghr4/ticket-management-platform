@@ -41,6 +41,7 @@ interface FilterConfig {
   showDateFilter?: boolean;
   showSearch?: boolean;
   searchField?: string;
+  showRole?: boolean;
 }
 
 const DataTableFilters = <T extends object>({
@@ -53,15 +54,19 @@ const DataTableFilters = <T extends object>({
     showDateFilter: true,
     showSearch: true,
     searchField: "title",
+    showRole: false,
   },
+  dataFor,
 }: {
   table: Table<T>;
   data: T[];
   filterConfig?: FilterConfig;
+  dataFor: string;
 }) => {
   const [statusPopoverOpen, setStatusPopoverOpen] = useState(false);
   const [priorityPopoverOpen, setPriorityPopoverOpen] = useState(false);
   const [departmentPopoverOpen, setDepartmentPopoverOpen] = useState(false);
+  const [rolePopoverOpen, setRolePopoverOpen] = useState(false);
 
   const departmentOptions = useMemo(() => {
     if (!filterConfig.showDepartment) return [];
@@ -82,6 +87,25 @@ const DataTableFilters = <T extends object>({
           index === self.findIndex((t) => t.id === department.id)
       );
   }, [data, filterConfig.showDepartment]);
+
+  const roleOptions = useMemo(() => {
+    if (!filterConfig.showRole) return [];
+
+    // map over departments and return unique departments
+    return data
+      .filter(
+        (item): item is T & { role: "admin" | "employee" | "manager" | "technician" } =>
+          "role" in item &&
+          (item.role === "admin" || item.role === "employee" || item.role === "manager" || item.role === "technician")
+      )
+      .map((item) => item.role)
+      .filter(
+        (role, index, self) =>
+          index === self.findIndex((t) => t === role)
+      );
+  }, [data, filterConfig.showRole]);
+
+
 
   const statusOptions = [
     {
@@ -162,6 +186,9 @@ const DataTableFilters = <T extends object>({
     : [];
   const selectedDepartments = filterConfig.showDepartment
     ? (table.getColumn("department")?.getFilterValue() as string[]) || []
+    : [];
+  const selectedRoles = filterConfig.showRole
+    ? (table.getColumn("role")?.getFilterValue() as string[]) || []
     : [];
 
   return (
@@ -398,6 +425,104 @@ const DataTableFilters = <T extends object>({
           </Popover>
         )}
 
+        {filterConfig.showRole && (
+          <Popover
+            open={rolePopoverOpen}
+            onOpenChange={setRolePopoverOpen}
+          >
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="border-dashed"
+              >
+                {selectedRoles.length > 0 ? (
+                  <div
+                    role="button"
+                    aria-label={`Clear Role filter`}
+                    tabIndex={0}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      table.getColumn("role")?.setFilterValue(undefined);
+                      setRolePopoverOpen(false);
+                    }}
+                  >
+                    <XCircle />
+                  </div>
+                ) : (
+                  <CirclePlus />
+                )}
+                Role
+                {selectedRoles.length > 0 && (
+                  <>
+                    <Separator orientation="vertical" />
+                    <div className="flex items-center gap-2">
+                      {selectedRoles.length <= 2 ? (
+                        selectedRoles.map((role) => (
+                          <Badge
+                            key={role}
+                            variant="outline"
+                          >
+                            {role}
+                          </Badge>
+                        ))
+                      ) : (
+                        <Badge variant="outline">
+                          {selectedRoles.length} selected
+                        </Badge>
+                      )}
+                    </div>
+                  </>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="w-[12.5rem] p-1"
+              align="start"
+            >
+              {roleOptions.map((role) => (
+                <label
+                  key={role}
+                  htmlFor={role}
+                  className="group flex items-center gap-4 px-2 rounded-sm text-sm hover:bg-accent cursor-pointer py-1.5 overflow-y-auto overflow-x-hidden"
+                >
+                  <Checkbox
+                    id={role}
+                    className="border-gray-400 group-hover:border-gray-500"
+                    checked={selectedRoles.includes(role)}
+                    onCheckedChange={(checked) => {
+                      const newFilterValues = checked
+                        ? [...selectedRoles, role]
+                        : selectedRoles.filter(
+                            (val) => val !== role
+                          );
+
+                      table
+                        .getColumn("role")
+                        ?.setFilterValue(
+                          newFilterValues.length > 0
+                            ? newFilterValues
+                            : undefined
+                        );
+                    }}
+                  />
+                  {role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()}
+                </label>
+              ))}
+              <Separator className="my-1" />
+              <Button
+                variant="ghost"
+                className="w-full"
+                onClick={() => {
+                  table.getColumn("role")?.setFilterValue(undefined);
+                  setRolePopoverOpen(false);
+                }}
+              >
+                Clear filters
+              </Button>
+            </PopoverContent>
+          </Popover>
+        )}
+
         {filterConfig.showDepartment && (
           <Popover
             open={departmentPopoverOpen}
@@ -499,7 +624,7 @@ const DataTableFilters = <T extends object>({
         {filterConfig.showDateFilter && (
           <DataTableDateFilter
             column={table.getColumn("created_at")!}
-            title="Created At"
+            title={dataFor === "tickets" ? "Created At" : "Joined"}
             multiple={true}
           />
         )}

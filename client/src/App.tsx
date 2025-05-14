@@ -11,7 +11,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import CreateTicket from "@/pages/CreateTicket";
 import TicketDetails from "@/pages/TicketDetails";
 import EditTicket from "@/pages/EditTicket";
-
+import Users from "@/pages/Users";
 function App() {
   const { isLoading } = useAuth();
 
@@ -38,7 +38,7 @@ function App() {
             <Route path="/tickets/create" element={<CreateTicket />} />
             <Route path="/tickets/:id" element={<TicketDetails />} />
             <Route path="/tickets/:id/edit" element={<EditTicket />} />
-            <Route path="/users" element={<h1>USERS</h1>} />
+            <Route path="/users" element={<Users />} />
           </Route>
         </Route>
       </Routes>

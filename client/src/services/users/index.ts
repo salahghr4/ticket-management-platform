@@ -1,21 +1,43 @@
 import api from "@/lib/api";
-import { User } from "@/types/auth";
+import { User, UserResponse } from "@/types/auth";
 
-const getDepartmentUsers = async (departmentId: number) => {
-  const response = await api<User[]>({
-    method: "GET",
-    url: `/users/department/${departmentId}`,
-  });
-  return response;
-};
+const UserService = {
+  getDepartmentUsers: async (departmentId: number) => {
+    return await api<User[]>({
+      method: "GET",
+      url: `/users/department/${departmentId}`,
+    });
+  },
 
-const getAllUsers = async () => {
-  const response = await api<User[]>({
-    method: "GET",
-    url: "/users",
-  });
-  return response;
-};
+  getAllUsers: async () => {
+    return await api<User[]>({
+      method: "GET",
+      url: "/users",
+    });
+  },
 
-export { getDepartmentUsers, getAllUsers };
+  createUser: async (user: User) => {
+    return await api<UserResponse>({
+      method: "POST",
+      url: "/users",
+      data: user,
+    });
+  },
 
+  updateUser: async (user: User) => {
+    return await api<UserResponse>({
+      method: "PUT",
+      url: `/users/${user.id}`,
+      data: user,
+    });
+  },
+
+  deleteUser: async (userId: number) => {
+    return await api<Pick<UserResponse, "message" | "success">>({
+      method: "DELETE",
+      url: `/users/${userId}`,
+    });
+  },
+}
+
+export default UserService;

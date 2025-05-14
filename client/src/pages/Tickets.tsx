@@ -2,17 +2,24 @@ import TicketTable from "@/components/Ticket/TicketTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTickets } from "@/hooks/useTickets";
-import { Plus, RefreshCw, Ticket as TicketIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowLeft, Plus, RefreshCw, Ticket as TicketIcon } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Tickets = () => {
   const { data: ticketsData, isLoading, refetch, isFetching } = useTickets();
-
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen w-full flex justify-center px-4 py-6">
       <div className="w-[95%] space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/dashboard")}
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
             <TicketIcon className="h-8 w-8 text-primary dark:text-primary-foreground" />
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold">Tickets</h1>

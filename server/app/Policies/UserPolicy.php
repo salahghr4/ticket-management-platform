@@ -44,7 +44,7 @@ class UserPolicy
      */
     public function update(User $user, User $model): Response
     {
-        return $user->id === $model->id
+        return ($user->id === $model->id) || $user->isAdmin()
             ? Response::allow()
             : Response::deny('you are not allowed to update this user');
     }

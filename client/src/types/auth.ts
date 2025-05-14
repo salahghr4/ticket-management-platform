@@ -36,4 +36,10 @@ export type LoginResponse = {
   token?: string;
   message?: string;
   errors?: string[];
+  };
+
+export type UserResponse = {
+  message: string;
+  user: User;
+  success: boolean;
 };
