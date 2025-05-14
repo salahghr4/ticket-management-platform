@@ -24,6 +24,7 @@ import {
   MessageSquare,
   Plus,
   TicketIcon,
+  Trash,
   User,
 } from "lucide-react";
 import { useState } from "react";
@@ -203,15 +204,25 @@ const TicketDetails = () => {
               <h1 className="text-2xl font-bold">Ticket Details</h1>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={() => navigate(`/tickets/${ticket.id}/edit`)}
-              className="gap-2"
-            >
-              <Edit className="h-4 w-4" />
-              Edit Ticket
-            </Button>
-          </div>
+          {(user?.role === "admin" || user?.department_id === ticket.department_id) && (
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => navigate(`/tickets/${ticket.id}/edit`)}
+                className="gap-2"
+              >
+                <Edit className="h-4 w-4" />
+                Edit Ticket
+              </Button>
+              <Button
+                onClick={() => navigate(`/tickets/${ticket.id}/edit`)}
+                className="gap-2"
+                variant="destructive"
+              >
+                <Trash className="h-4 w-4" />
+                Delete Ticket
+              </Button>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 grid-rows-[auto_auto] lg:grid-cols-3 gap-6">

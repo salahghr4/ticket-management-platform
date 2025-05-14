@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Gate;
 class TicketController extends Controller
 {
 
@@ -58,6 +58,8 @@ class TicketController extends Controller
             ], 404);
         }
 
+        Gate::authorize('update', $ticket);
+
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'description' => 'required|string',
@@ -88,6 +90,8 @@ class TicketController extends Controller
     public function destroy(string $id)
     {
         $ticket = Ticket::find($id);
+
+        Gate::authorize('delete', $ticket);
 
         if (!$ticket) {
             return response()->json([

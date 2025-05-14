@@ -1,26 +1,14 @@
-import Loader from "@/components/Logo/Loader";
-import TicketNotFound from "@/components/Ticket/TicketNotFound";
 import TicketForm from "@/components/Ticket/TikcetForm";
 import { Button } from "@/components/ui/button";
-import { useTicket } from "@/hooks/useTickets";
+import { Ticket } from "@/types/tickets";
 import {
   ArrowLeft,
   TicketIcon
 } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-const EditTicket = () => {
-  const { id } = useParams();
+const EditTicket = ({ ticket }: { ticket: Ticket }) => {
   const navigate = useNavigate();
-  const { data: ticketData, isLoading: ticketLoading } = useTicket(Number(id));
-
-  if (ticketLoading) {
-    return <Loader />;
-  }
-
-  if (!ticketData?.ticket) {
-    return <TicketNotFound />;
-  }
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -42,7 +30,7 @@ const EditTicket = () => {
           </div>
         </div>
 
-        <TicketForm ticket={ticketData.ticket} />
+        <TicketForm ticket={ticket} />
       </div>
     </div>
   );

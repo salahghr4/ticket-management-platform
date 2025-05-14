@@ -19,6 +19,7 @@ import {
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -53,7 +54,7 @@ export default function DataTable<T extends object>({
   isLoading = false,
   columns,
   dataFor = "data",
-  filterConfig
+  filterConfig,
 }: DataTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -155,22 +156,28 @@ export default function DataTable<T extends object>({
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <p className="text-sm font-medium">Rows per page</p>
-            <select
-              value={table.getState().pagination.pageSize}
-              onChange={(e) => {
-                table.setPageSize(Number(e.target.value));
+            <Select
+              value={table.getState().pagination.pageSize.toString()}
+              onValueChange={(value) => {
+                table.setPageSize(Number(value));
               }}
-              className="h-8 w-[70px] rounded-md border border-input bg-background px-2 py-1 text-sm"
             >
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <option
-                  key={pageSize}
-                  value={pageSize}
-                >
-                  {pageSize}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="w-[70px]">
+                <SelectValue placeholder={table.getState().pagination.pageSize.toString()} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {[10, 20, 30, 40, 50].map((pageSize) => (
+                    <SelectItem
+                      key={pageSize}
+                      value={pageSize.toString()}
+                    >
+                      {pageSize}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
           <div className="flex items-center gap-1">
             <Button

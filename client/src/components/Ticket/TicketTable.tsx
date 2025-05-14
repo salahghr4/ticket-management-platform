@@ -1,6 +1,7 @@
 import DataTable from "@/components/DataTale/DataTable";
 import getTicketTableColumns from "@/components/DataTale/TicketsTableColumns";
-import { useUpdateTicket } from "@/hooks/useTickets";
+import { useAuth } from "@/hooks/useAuth";
+import { useDeleteTicket, useUpdateTicket } from "@/hooks/useTickets";
 import { Ticket } from "@/types/tickets";
 import { ColumnDef } from "@tanstack/react-table";
 import { useCallback, useMemo } from "react";
@@ -15,6 +16,20 @@ interface TicketTableProps {
 const TicketTable = ({ data, isLoading }: TicketTableProps) => {
   const navigate = useNavigate();
   const { mutateAsync: updateTicket } = useUpdateTicket();
+  const { mutateAsync: deleteTicket } = useDeleteTicket();
+  const { user } = useAuth();
+
+  const handleDeleteTicket = useCallback((ticketId: number) => {
+    try {
+      toast.promise(deleteTicket(ticketId), {
+        loading: "Deleting ticket...",
+        success: () => `Ticket deleted`,
+        error:  "Error deleting ticket, please try again",
+      });
+    } catch (error) {
+      console.error("Error deleting ticket:", error);
+    }
+  }, [deleteTicket]);
 
   const handleStatusChange = useCallback(
     (ticket: Ticket) => {
@@ -47,8 +62,8 @@ const TicketTable = ({ data, isLoading }: TicketTableProps) => {
   );
 
   const columns: ColumnDef<Ticket>[] = useMemo(
-    () => getTicketTableColumns({ handleStatusChange, navigate }),
-    [handleStatusChange, navigate]
+    () => getTicketTableColumns({ handleStatusChange, navigate, handleDeleteTicket, user }),
+    [handleStatusChange, navigate, handleDeleteTicket, user]
   );
   return (
     <DataTable
