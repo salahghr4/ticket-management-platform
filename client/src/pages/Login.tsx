@@ -37,13 +37,15 @@ const Login = () => {
 
   const onSubmit = async ({ email, password }: Login) => {
     setIsLoading(true);
+    
     const { success, error } = await login(email, password);
-    if (success) {
-      navigate(redirectUrl, { replace: true });
-      toast.success("Login successful");
-    } else {
-      setError(error);
-    }
+      if (success) {
+        navigate(redirectUrl, { replace: true });
+        toast.success("Login successful");
+      } else {
+        setError(error);
+        console.log(error);
+      }
     setIsLoading(false);
   };
 

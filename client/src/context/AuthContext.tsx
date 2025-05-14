@@ -2,6 +2,7 @@ import { AuthContextType } from "@/types/auth";
 import { createContext, useState, useLayoutEffect } from "react";
 import storage from "@/lib/storage";
 import { useMe, useLogin, useLogout } from "@/hooks/useAuth";
+import { AxiosError } from "axios";
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
@@ -25,15 +26,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const login = async (email: string, password: string) => {
     try {
       const result = await loginMutation.mutateAsync({ email, password });
-      if (result.token) {
+      if (result?.token) {
         setToken(result.token);
       }
       return { success: true, error: null };
     } catch (error) {
+      if (error instanceof AxiosError) {
+        return {
+          success: false,
+          error: error.response?.data.message,
+        };
+      }
       return {
         success: false,
-        error:
-          error instanceof Error ? error.message : "An unknown error occurred",
+        error: "An unknown error occurred",
       };
     }
   };

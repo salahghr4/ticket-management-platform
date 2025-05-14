@@ -54,10 +54,9 @@ export const useLogin = () => {
         storage.set("token", response.token);
         return response;
       }
-      throw new Error(response.message ?? "An unknown error occurred");
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(authKeys.me(), data.user);
+      queryClient.setQueryData(authKeys.me(), data?.user);
     },
   });
 };
