@@ -6,16 +6,13 @@ import { formatDate } from "@/lib/format";
 import { User } from "@/types/auth";
 import { ColumnDef } from "@tanstack/react-table";
 import { addDays } from "date-fns";
-import { NavigateFunction } from "react-router-dom";
 
 interface GetUsersTableColumnsProps {
   handleDeleteUser: (userId: number) => void;
-  navigate: NavigateFunction;
   AuthUser: User | null;
 }
 
 const getUsersTableColumns = ({
-  navigate,
   handleDeleteUser,
   AuthUser,
 }: GetUsersTableColumnsProps): ColumnDef<User>[] => [
@@ -121,7 +118,6 @@ const getUsersTableColumns = ({
     cell: ({ row }) => (
       <UserActions
         user={row.original}
-        navigate={navigate}
         handleDeleteUser={handleDeleteUser}
         AuthUser={AuthUser}
       />

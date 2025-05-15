@@ -21,12 +21,14 @@ const TicketActions = ({
   navigate,
   handleDeleteTicket,
   AuthUser,
+  pathname,
 }: {
   ticket: Ticket;
   handleStatusChange: (ticket: Ticket) => void;
   navigate: NavigateFunction;
   handleDeleteTicket: (ticketId: number) => void;
   AuthUser: User | null;
+  pathname: string;
 }) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
@@ -56,7 +58,11 @@ const TicketActions = ({
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={() => {
-              navigate(`/tickets/${ticket.id}`);
+              navigate(`/tickets/${ticket.id}`, {
+                state: {
+                  from: pathname,
+                },
+              });
             }}
             className="cursor-pointer"
           >
@@ -67,7 +73,11 @@ const TicketActions = ({
             <>
               <DropdownMenuItem
                 onClick={() => {
-                  navigate(`/tickets/${ticket.id}/edit`);
+                  navigate(`/tickets/${ticket.id}/edit`, {
+                    state: {
+                      from: pathname,
+                    },
+                  });
                 }}
                 className="cursor-pointer"
               >

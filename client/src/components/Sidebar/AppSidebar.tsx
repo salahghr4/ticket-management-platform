@@ -59,7 +59,12 @@ const AppSidebar = () => {
                     isActive={location.pathname.includes(item.url)}
                     tooltip={item.title}
                   >
-                    <Link to={item.url}>
+                    <Link
+                      to={item.url}
+                      state={{
+                        from: location.pathname,
+                      }}
+                    >
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>
                     </Link>

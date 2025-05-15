@@ -5,7 +5,7 @@ import { useDeleteTicket, useUpdateTicket } from "@/hooks/useTickets";
 import { Ticket } from "@/types/tickets";
 import { ColumnDef } from "@tanstack/react-table";
 import { useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 interface TicketTableProps {
@@ -19,17 +19,20 @@ const TicketTable = ({ data, isLoading }: TicketTableProps) => {
   const { mutateAsync: deleteTicket } = useDeleteTicket();
   const { user } = useAuth();
 
-  const handleDeleteTicket = useCallback((ticketId: number) => {
-    try {
-      toast.promise(deleteTicket(ticketId), {
-        loading: "Deleting ticket...",
-        success: () => `Ticket deleted`,
-        error:  "Error deleting ticket, please try again",
-      });
-    } catch (error) {
-      console.error("Error deleting ticket:", error);
-    }
-  }, [deleteTicket]);
+  const handleDeleteTicket = useCallback(
+    (ticketId: number) => {
+      try {
+        toast.promise(deleteTicket(ticketId), {
+          loading: "Deleting ticket...",
+          success: () => `Ticket deleted`,
+          error: "Error deleting ticket, please try again",
+        });
+      } catch (error) {
+        console.error("Error deleting ticket:", error);
+      }
+    },
+    [deleteTicket]
+  );
 
   const handleStatusChange = useCallback(
     (ticket: Ticket) => {
@@ -61,9 +64,17 @@ const TicketTable = ({ data, isLoading }: TicketTableProps) => {
     [updateTicket]
   );
 
+  const { pathname } = useLocation();
   const columns: ColumnDef<Ticket>[] = useMemo(
-    () => getTicketTableColumns({ handleStatusChange, navigate, handleDeleteTicket, user }),
-    [handleStatusChange, navigate, handleDeleteTicket, user]
+    () =>
+      getTicketTableColumns({
+        handleStatusChange,
+        navigate,
+        handleDeleteTicket,
+        user,
+        pathname,
+      }),
+    [handleStatusChange, navigate, handleDeleteTicket, user, pathname]
   );
   return (
     <DataTable
@@ -77,7 +88,7 @@ const TicketTable = ({ data, isLoading }: TicketTableProps) => {
         showPriority: true,
         showDepartment: true,
         showDateFilter: true,
-        searchField: "title"
+        searchField: "title",
       }}
     />
   );

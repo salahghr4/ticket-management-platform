@@ -5,14 +5,12 @@ import { useDeleteUser, useUsers } from "@/hooks/useUsers";
 import { User } from "@/types/auth";
 import { ColumnDef } from "@tanstack/react-table";
 import { useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const UsersTable = () => {
   const { data: usersData, isLoading } = useUsers();
   const { user } = useAuth();
   const { mutate: deleteUser } = useDeleteUser();
-  const navigate = useNavigate();
 
   const handleDeleteUser = useCallback(
     (userId: number) => {
@@ -29,10 +27,9 @@ const UsersTable = () => {
     () =>
       getUsersTableColumns({
         handleDeleteUser,
-        navigate,
         AuthUser: user,
       }),
-    [navigate, user, handleDeleteUser]
+    [user, handleDeleteUser]
   );
   return (
     <DataTable

@@ -5,13 +5,15 @@ import UserNotFound from "@/components/Users/UserNotFound";
 import { useDepartments } from "@/hooks/useDepartments";
 import { useUser } from "@/hooks/useUsers";
 import { ArrowLeft, UserIcon } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const EditUser = () => {
   const { id } = useParams();
   const { data: user, isLoading: userLoading } = useUser(Number(id));
   const { data: departments, isLoading: departmentsLoading } = useDepartments();
   const navigate = useNavigate();
+  const { pathname, state } = useLocation();
+  const redirectUrl = state?.from || "/users";
 
   if (departmentsLoading || userLoading) {
     return <Loader />;
@@ -29,7 +31,11 @@ const EditUser = () => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate("/users")}
+              onClick={() => navigate(redirectUrl, {
+                state: {
+                  from: pathname,
+                },
+              })}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>

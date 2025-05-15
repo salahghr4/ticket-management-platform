@@ -53,7 +53,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 interface TicketFormProps {
@@ -84,6 +84,8 @@ const TicketForm = ({ ticket }: TicketFormProps) => {
   const { data: users, isLoading: usersLoading } = useUsers();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
 
   const isLoading = departmentsLoading || usersLoading;
 
@@ -143,7 +145,11 @@ const TicketForm = ({ ticket }: TicketFormProps) => {
       toast.promise(updateTicket({ ...data, id: ticket.id }), {
         loading: "Updating ticket...",
         success: () => {
-          navigate(`/tickets/${ticket.id}`);
+          navigate(`/tickets/${ticket.id}`, {
+            state: {
+              from: pathname,
+            },
+          });
           return "Ticket updated successfully!";
         },
         error: "Failed to update ticket. Please try again.",
@@ -151,8 +157,12 @@ const TicketForm = ({ ticket }: TicketFormProps) => {
     } else {
       toast.promise(createTicket(data), {
         loading: "Creating ticket...",
-        success: () => {
-          navigate("/tickets");
+        success: (data) => {
+          navigate(`/tickets/${data.ticket.id}`, {
+            state: {
+              from: pathname,
+            },
+          });
           return "Ticket created successfully!";
         },
         error: "Failed to create ticket. Please try again.",

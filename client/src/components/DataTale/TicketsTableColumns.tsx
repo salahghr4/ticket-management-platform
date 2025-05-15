@@ -15,6 +15,7 @@ interface GetTicketTableColumnsProps {
   navigate: NavigateFunction;
   handleDeleteTicket: (ticketId: number) => void;
   user: User | null;
+  pathname: string;
 }
 
 const getTicketTableColumns = ({
@@ -22,6 +23,7 @@ const getTicketTableColumns = ({
   navigate,
   handleDeleteTicket,
   user: AuthUser,
+  pathname,
 }: GetTicketTableColumnsProps): ColumnDef<Ticket>[] => [
   {
     id: "select",
@@ -53,6 +55,9 @@ const getTicketTableColumns = ({
       <Link
         to={`/tickets/${row.getValue("id")}`}
         className="underline text-primary dark:text-accent-foreground/80"
+        state={{
+          from: pathname,
+        }}
       >
         <span className="text-center">#{row.getValue("id")}</span>
       </Link>
@@ -177,6 +182,7 @@ const getTicketTableColumns = ({
         navigate={navigate}
         handleDeleteTicket={handleDeleteTicket}
         AuthUser={AuthUser}
+        pathname={pathname}
       />
     ),
   },

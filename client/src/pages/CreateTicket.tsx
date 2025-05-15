@@ -1,10 +1,12 @@
 import TicketForm from "@/components/Ticket/TikcetForm";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Ticket as TicketIcon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function CreateTicket() {
   const navigate = useNavigate();
+  const { pathname, state } = useLocation();
+  const redirectUrl = state?.from || "/tickets";
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -14,7 +16,11 @@ export default function CreateTicket() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate("/tickets")}
+              onClick={() => navigate(redirectUrl, {
+                state: {
+                  from: pathname,
+                },
+              })}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>

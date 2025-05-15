@@ -5,10 +5,13 @@ import {
   ArrowLeft,
   TicketIcon
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const EditTicket = ({ ticket }: { ticket: Ticket }) => {
   const navigate = useNavigate();
+  const { pathname, state } = useLocation();
+  const redirectUrl = state?.from || "/tickets";
+
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -19,7 +22,11 @@ const EditTicket = ({ ticket }: { ticket: Ticket }) => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate("/tickets")}
+              onClick={() => navigate(redirectUrl, {
+                state: {
+                  from: pathname,
+                },
+              })}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>

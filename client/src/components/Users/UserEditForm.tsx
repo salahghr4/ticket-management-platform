@@ -37,7 +37,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Building, Check, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const UserEditForm = ({
@@ -52,6 +52,8 @@ const UserEditForm = ({
   );
   const [openDepartmentPopover, setOpenDepartmentPopover] = useState(false);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
 
   const form = useForm<UserEditFormValues>({
     resolver: zodResolver(updateUserSchema),
@@ -70,7 +72,11 @@ const UserEditForm = ({
     toast.promise(updateUser(data), {
       loading: "Updating user...",
       success: () => {
-        navigate("/users");
+        navigate("/users", {
+          state: {
+            from: pathname,
+          },
+        });
         return "User updated successfully!";
       },
       error: "Failed to update user. Please try again.",

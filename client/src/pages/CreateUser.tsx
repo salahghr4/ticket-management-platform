@@ -3,11 +3,14 @@ import { Button } from "@/components/ui/button";
 import UserForm from "@/components/Users/UserForm";
 import { useDepartments } from "@/hooks/useDepartments";
 import { ArrowLeft, UserIcon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const CreateUser = () => {
   const { data: departments, isLoading: departmentsLoading } = useDepartments();
   const navigate = useNavigate();
+  const { pathname, state } = useLocation();
+  const redirectUrl = state?.from || "/users";
+
 
   if (departmentsLoading) {
     return <Loader />;
@@ -21,7 +24,11 @@ const CreateUser = () => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate("/users")}
+              onClick={() => navigate(redirectUrl, {
+                state: {
+                  from: pathname,
+                },
+              })}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>

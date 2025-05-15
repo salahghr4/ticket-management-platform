@@ -33,7 +33,7 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const redirectUrl = location.state?.redirectUrl || "/dashboard";
+  const redirectUrl = location.state?.from || "/dashboard";
 
   const onSubmit = async ({ email, password }: Login) => {
     setIsLoading(true);

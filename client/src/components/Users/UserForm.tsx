@@ -37,13 +37,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Building, Check, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const UserForm = ({ departments }: { departments: Department[] }) => {
   const { mutateAsync: createUser, isPending } = useCreateUser();
   const [openDepartmentPopover, setOpenDepartmentPopover] = useState(false);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
 
   const form = useForm<UserCreateFormValues>({
     resolver: zodResolver(createUserSchema),
@@ -61,7 +63,11 @@ const UserForm = ({ departments }: { departments: Department[] }) => {
     toast.promise(createUser(data), {
       loading: "Creating user...",
       success: () => {
-        navigate("/users");
+        navigate("/users", {
+          state: {
+            from: pathname,
+          },
+        });
         return (
           <div className="flex flex-col gap-2">
             <p>User created successfully!</p>

@@ -11,21 +11,21 @@ import DeleteUserDialog from "@/components/Users/DeleteUserDialog";
 import { User } from "@/types/auth";
 import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
-import { NavigateFunction } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const UserActions = ({
   user,
-  navigate,
   handleDeleteUser,
   AuthUser,
 }: {
   user: User;
-  navigate: NavigateFunction;
   handleDeleteUser: (userId: number) => void;
   AuthUser: User | null;
 }) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -55,7 +55,11 @@ const UserActions = ({
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
-                  navigate(`/admin/users/${user.id}/edit`);
+                  navigate(`/admin/users/${user.id}/edit`, {
+                    state: {
+                      from: pathname,
+                    },
+                  });
                 }}
                 className="cursor-pointer"
               >

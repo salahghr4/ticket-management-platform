@@ -3,11 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTickets } from "@/hooks/useTickets";
 import { ArrowLeft, Plus, RefreshCw, Ticket as TicketIcon } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Tickets = () => {
   const { data: ticketsData, isLoading, refetch, isFetching } = useTickets();
   const navigate = useNavigate();
+  const { pathname, state } = useLocation();
+  const redirectUrl = state?.from || "/dashboard";
   return (
     <div className="min-h-screen w-full flex justify-center px-4 py-6">
       <div className="w-[95%] space-y-6">
@@ -16,7 +18,11 @@ const Tickets = () => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate(redirectUrl, {
+                state: {
+                  from: pathname,
+                },
+              })}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -45,6 +51,9 @@ const Tickets = () => {
             <Link
               to="/tickets/create"
               className="flex-1 sm:flex-none"
+              state={{
+                from: pathname,
+              }}
             >
               <Button className="w-full">
                 <Plus className="mr-2 h-4 w-4" />

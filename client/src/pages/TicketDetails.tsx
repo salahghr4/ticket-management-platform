@@ -28,7 +28,7 @@ import {
   User,
 } from "lucide-react";
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 interface Comment {
@@ -99,6 +99,8 @@ const CommentItem = ({
 const TicketDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { pathname, state } = useLocation();
+  const redirectUrl = state?.from || "/tickets";
   const { data: ticketData, isLoading } = useTicket(Number(id));
   const [comment, setComment] = useState("");
   const [replyTo, setReplyTo] = useState<number | null>(null);
@@ -195,7 +197,11 @@ const TicketDetails = () => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate("/tickets")}
+              onClick={() => navigate(redirectUrl, {
+                state: {
+                  from: pathname,
+                },
+              })}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -207,14 +213,22 @@ const TicketDetails = () => {
           {(user?.role === "admin" || user?.department_id === ticket.department_id) && (
             <div className="flex items-center gap-3">
               <Button
-                onClick={() => navigate(`/tickets/${ticket.id}/edit`)}
+                onClick={() => navigate(`/tickets/${ticket.id}/edit`, {
+                  state: {
+                    from: pathname,
+                  },
+                })}
                 className="gap-2"
               >
                 <Edit className="h-4 w-4" />
                 Edit Ticket
               </Button>
               <Button
-                onClick={() => navigate(`/tickets/${ticket.id}/edit`)}
+                onClick={() => navigate(`/tickets/${ticket.id}/edit`, {
+                  state: {
+                    from: pathname,
+                  },
+                })}
                 className="gap-2"
                 variant="destructive"
               >

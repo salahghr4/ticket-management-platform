@@ -3,13 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { ArrowLeft, Plus, Users as UsersIcon } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Users = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { pathname, state } = useLocation();
+  const redirectUrl = state?.from || "/dashboard";
   const isAdmin = user?.role === "admin";
-  
+
   return (
     <div className="min-h-screen w-full flex justify-center px-4 py-6">
       <div className="w-[95%] space-y-6">
@@ -18,7 +20,11 @@ const Users = () => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate(redirectUrl, {
+                state: {
+                  from: pathname,
+                },
+              })}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -40,6 +46,9 @@ const Users = () => {
             <Link
               to="/admin/users/create"
               className="flex-1 sm:flex-none"
+              state={{
+                from: pathname,
+              }}
             >
               <Button className="w-full">
                 <Plus className="mr-2 h-4 w-4" />

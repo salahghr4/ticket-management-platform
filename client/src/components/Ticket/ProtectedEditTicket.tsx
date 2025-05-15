@@ -24,7 +24,7 @@ const ProtectedEditTicket = () => {
     user?.department_id === ticketData?.ticket?.department_id;
 
   if (!canEdit) {
-    return <Navigate to={`/tickets/${id}`} />;
+    return <Navigate to={`/tickets/${id}`} replace/>;
   }
 
   return <EditTicket ticket={ticketData?.ticket} />;

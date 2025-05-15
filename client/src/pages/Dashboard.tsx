@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTicketStats } from "@/hooks/useTickets";
 import { fillMissingDates } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Dashboard = () => {
+  const { pathname } = useLocation();
   const initialTicketStats = {
     totalTickets: 0,
     openTickets: 0,
@@ -45,7 +46,12 @@ const Dashboard = () => {
               <CardHeader>
                 <CardTitle className="flex justify-between">
                   <span className="flex items-center">Recent Tickets</span>
-                  <Link to="/tickets">
+                  <Link
+                    to="/tickets"
+                    state={{
+                      from: pathname,
+                    }}
+                  >
                     <Button
                       variant="link"
                       className="text-sm dark:text-muted-foreground text-primary"
