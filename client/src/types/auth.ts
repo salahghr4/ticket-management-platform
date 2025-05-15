@@ -1,3 +1,5 @@
+import { Department } from "@/types/department";
+
 export type AuthContextType = {
   user: User | null;
   token: string | null;
@@ -19,14 +21,6 @@ export type User = {
   email_verified_at: Date | null;
   department_id: number | null;
   department?: Department;
-  created_at: Date;
-  updated_at: Date;
-};
-
-export type Department = {
-  id: number;
-  name: string;
-  description: string | null;
   created_at: Date;
   updated_at: Date;
 };

@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/select";
 import { useCreateUser } from "@/hooks/useUsers";
 import { cn } from "@/lib/utils";
-import { Department } from "@/types/auth";
+import { Department } from "@/types/department";
 import { UserCreateFormValues, createUserSchema } from "@/validation/users";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Building, Check, ChevronsUpDown } from "lucide-react";

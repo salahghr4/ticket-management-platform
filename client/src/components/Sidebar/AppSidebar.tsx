@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { User } from "@/types/auth";
-import { FolderKanban, LayoutDashboard, Users } from "lucide-react";
+import { Building, FolderKanban, LayoutDashboard, Users } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const AppSidebar = () => {
@@ -34,6 +34,11 @@ const AppSidebar = () => {
       title: "Users",
       url: "/users",
       icon: Users,
+    },
+    {
+      title: "Departments",
+      url: "/departments",
+      icon: Building,
     },
   ];
   const location = useLocation();

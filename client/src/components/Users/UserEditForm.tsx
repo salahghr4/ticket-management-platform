@@ -31,7 +31,8 @@ import {
 } from "@/components/ui/select";
 import { useUpdateUser } from "@/hooks/useUsers";
 import { cn } from "@/lib/utils";
-import { Department, User } from "@/types/auth";
+import { User } from "@/types/auth";
+import { Department } from "@/types/department";
 import { UserEditFormValues, updateUserSchema } from "@/validation/users";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Building, Check, ChevronsUpDown } from "lucide-react";

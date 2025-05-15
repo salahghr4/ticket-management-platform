@@ -15,6 +15,7 @@ import Users from "@/pages/Users";
 import AdminRoutes from "@/routes/AdminRoutes";
 import CreateUser from "@/pages/CreateUser";
 import EditUser from "@/pages/EditUser";
+import Departments from "@/pages/Departments";
 function App() {
   const { isLoading } = useAuth();
 
@@ -42,6 +43,7 @@ function App() {
             <Route path="/tickets/:id" element={<TicketDetails />}/>
             <Route path="/tickets/:id/edit" element={<ProtectedEditTicket />}/>
             <Route path="/users" element={<Users />}/>
+            <Route path="/departments" element={<Departments />}/>
             <Route element={<AdminRoutes />}>
               <Route path="/admin/users/create" element={<CreateUser />}/>
               <Route path="/admin/users/:id/edit" element={<EditUser />}/>

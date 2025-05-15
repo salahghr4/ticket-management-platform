@@ -626,7 +626,13 @@ const DataTableFilters = <T extends object>({
         {filterConfig.showDateFilter && (
           <DataTableDateFilter
             column={table.getColumn("created_at")!}
-            title={dataFor === "tickets" ? "Created At" : "Joined"}
+            title={
+              dataFor === "tickets"
+                ? "Created At"
+                : dataFor === "users"
+                ? "Joined"
+                : "Created At"
+            }
             multiple={true}
           />
         )}
@@ -655,7 +661,8 @@ const DataTableFilters = <T extends object>({
                 </PopoverTrigger>
               </Popover>
             )
-          : (table.getColumn("role")?.getFilterValue() !== undefined ||
+          : dataFor === "users"
+          ? (table.getColumn("role")?.getFilterValue() !== undefined ||
               table.getColumn("department")?.getFilterValue() !== undefined ||
               table.getColumn("created_at")?.getFilterValue() !==
                 undefined) && (
@@ -667,6 +674,26 @@ const DataTableFilters = <T extends object>({
                     onClick={() => {
                       table.getColumn("role")?.setFilterValue(undefined);
                       table.getColumn("department")?.setFilterValue(undefined);
+                      table.getColumn("created_at")?.setFilterValue(undefined);
+                    }}
+                  >
+                    <CircleX className="h-4 w-4" />
+                    Reset
+                  </Button>
+                </PopoverTrigger>
+              </Popover>
+            )
+          : dataFor === "departments" &&
+            (table.getColumn("name")?.getFilterValue() !== undefined ||
+              table.getColumn("created_at")?.getFilterValue() !==
+                undefined) && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="border-dashed"
+                    onClick={() => {
+                      table.getColumn("name")?.setFilterValue(undefined);
                       table.getColumn("created_at")?.setFilterValue(undefined);
                     }}
                   >

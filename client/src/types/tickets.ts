@@ -1,4 +1,5 @@
-import { Department, User } from "@/types/auth";
+import { User } from "@/types/auth";
+import { Department } from "@/types/department";
 
 export type Ticket = {
   id: number;
