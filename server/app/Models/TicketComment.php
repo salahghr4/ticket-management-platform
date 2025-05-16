@@ -9,10 +9,13 @@ class TicketComment extends Model
 {
     use HasFactory;
 
+    protected $table = 'ticket_comments';
+
     protected $fillable = [
         'ticket_id',
         'user_id',
-        'comment',
+        'content',
+        'parent_id',
     ];
 
     public function ticket()
@@ -23,5 +26,10 @@ class TicketComment extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function replies()
+    {
+        return $this->hasMany(TicketComment::class, 'parent_id');
     }
 }

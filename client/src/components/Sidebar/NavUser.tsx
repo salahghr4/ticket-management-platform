@@ -67,6 +67,9 @@ export function NavUser({ user }: { user: User }) {
                   <span className="truncate text-xs text-muted-foreground font-bold">
                     {user?.role}
                   </span>
+                  <span className="truncate text-xs text-muted-foreground font-bold">
+                    {user?.department?.name}
+                  </span>
                 </div>
               </div>
             </DropdownMenuLabel>

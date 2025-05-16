@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
+import { useComments, useCreateComment } from "@/hooks/useComments";
 import { useTicket } from "@/hooks/useTickets";
 import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -21,6 +22,7 @@ import {
   Edit,
   Flag,
   Info,
+  Loader2,
   MessageSquare,
   Plus,
   TicketIcon,
@@ -30,71 +32,8 @@ import {
 import { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-
-interface Comment {
-  id: number;
-  content: string;
-  user: {
-    name: string;
-    email: string;
-  };
-  createdAt: Date;
-  replies?: Comment[];
-}
-
-const CommentItem = ({
-  comment,
-  onReply,
-  setShowCommentInput,
-}: {
-  comment: Comment;
-  onReply: (parentId: number) => void;
-  setShowCommentInput: (show: boolean) => void;
-}) => {
-  return (
-    <div className="space-y-4">
-      <div className="flex gap-4">
-        <Avatar>
-          <AvatarFallback>
-            {comment.user.name.slice(0, 2).toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex-1 space-y-1">
-          <div className="flex items-center gap-2">
-            <p className="font-medium">{comment.user.name}</p>
-            <span className="text-sm text-muted-foreground">
-              {formatDate(comment.createdAt)}
-            </span>
-          </div>
-          <p className="text-sm text-muted-foreground">{comment.content}</p>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 px-2 text-muted-foreground"
-            onClick={() => {
-              onReply(comment.id);
-              setShowCommentInput(true);
-            }}
-          >
-            Reply
-          </Button>
-        </div>
-      </div>
-      {comment.replies && comment.replies.length > 0 && (
-        <div className="ml-12 space-y-4">
-          {comment.replies.map((reply) => (
-            <CommentItem
-              key={reply.id}
-              comment={reply}
-              onReply={onReply}
-              setShowCommentInput={setShowCommentInput}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
+import { CommentItem } from "@/components/Comment/CommentItem";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const TicketDetails = () => {
   const { id } = useParams();
@@ -106,77 +45,10 @@ const TicketDetails = () => {
   const [replyTo, setReplyTo] = useState<number | null>(null);
   const { user } = useAuth();
   const [showCommentInput, setShowCommentInput] = useState(false);
-
-  // Example comments data - replace with actual data from your backend
-  const [comments, setComments] = useState<Comment[]>([
-    {
-      id: 1,
-      content: "This is the main comment",
-      user: {
-        name: "John Doe",
-        email: "john@example.com",
-      },
-      createdAt: new Date(),
-      replies: [
-        {
-          id: 2,
-          content: "This is a reply to the main comment",
-          user: {
-            name: "Jane Smith",
-            email: "jane@example.com",
-          },
-          createdAt: new Date(),
-          replies: [
-            {
-              id: 3,
-              content: "This is a reply to the reply",
-              user: {
-                name: "John Doe",
-                email: "john@example.com",
-              },
-              createdAt: new Date(),
-            },
-          ],
-        },
-      ],
-    },
-  ]);
-
-  const handleAddComment = (parentId?: number) => {
-    if (!comment.trim() || !user) return;
-
-    const newComment: Comment = {
-      id: Date.now(), // Replace with actual ID from backend
-      content: comment,
-      user: {
-        name: user.name,
-        email: user.email,
-      },
-      createdAt: new Date(),
-    };
-
-    if (parentId) {
-      // Add reply to existing comment
-      setComments((prevComments) =>
-        prevComments.map((c) => {
-          if (c.id === parentId) {
-            return {
-              ...c,
-              replies: [...(c.replies || []), newComment],
-            };
-          }
-          return c;
-        })
-      );
-    } else {
-      // Add new top-level comment
-      setComments((prev) => [...prev, newComment]);
-    }
-
-    setComment("");
-    setReplyTo(null);
-    toast.success("Comment added successfully");
-  };
+  const { data: comments, isLoading: isLoadingComments } = useComments(
+    Number(id)
+  );
+  const createComment = useCreateComment(Number(id));
 
   if (isLoading) {
     return <Loader />;
@@ -197,11 +69,13 @@ const TicketDetails = () => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate(redirectUrl, {
-                state: {
-                  from: pathname,
-                },
-              })}
+              onClick={() =>
+                navigate(redirectUrl, {
+                  state: {
+                    from: pathname,
+                  },
+                })
+              }
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -210,25 +84,30 @@ const TicketDetails = () => {
               <h1 className="text-2xl font-bold">Ticket Details</h1>
             </div>
           </div>
-          {(user?.role === "admin" || user?.department_id === ticket.department_id) && (
+          {(user?.role === "admin" ||
+            user?.department_id === ticket.department_id) && (
             <div className="flex items-center gap-3">
               <Button
-                onClick={() => navigate(`/tickets/${ticket.id}/edit`, {
-                  state: {
-                    from: pathname,
-                  },
-                })}
+                onClick={() =>
+                  navigate(`/tickets/${ticket.id}/edit`, {
+                    state: {
+                      from: pathname,
+                    },
+                  })
+                }
                 className="gap-2"
               >
                 <Edit className="h-4 w-4" />
                 Edit Ticket
               </Button>
               <Button
-                onClick={() => navigate(`/tickets/${ticket.id}/edit`, {
-                  state: {
-                    from: pathname,
-                  },
-                })}
+                onClick={() =>
+                  navigate(`/tickets/${ticket.id}/edit`, {
+                    state: {
+                      from: pathname,
+                    },
+                  })
+                }
                 className="gap-2"
                 variant="destructive"
               >
@@ -412,7 +291,7 @@ const TicketDetails = () => {
                   </div>
                   <div className="space-y-1">
                     <p className="text-sm text-muted-foreground">Comments</p>
-                    <p className="font-medium">{comments.length}</p>
+                    <p className="font-medium">{comments?.length ?? 0}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-sm text-muted-foreground">Updates</p>
@@ -425,7 +304,7 @@ const TicketDetails = () => {
             </Card>
           </div>
 
-          {/* Comments Section - Moved to bottom on mobile */}
+          {/* Comments Section */}
           <div className="lg:col-span-2">
             <Card className="gap-0">
               <CardHeader>
@@ -434,17 +313,20 @@ const TicketDetails = () => {
                     <MessageSquare className="h-5 w-5" />
                     Comments
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setShowCommentInput(!showCommentInput)}
-                    className={cn(
-                      showCommentInput ? "rotate-45" : "rotate-0",
-                      "transition-transform duration-200 rounded-full hover:bg-muted"
-                    )}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
+                  {(ticket.department_id === user?.department_id ||
+                    user?.role === "admin") && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setShowCommentInput(!showCommentInput)}
+                      className={cn(
+                        showCommentInput ? "rotate-45" : "rotate-0",
+                        "transition-transform duration-200 rounded-full hover:bg-muted"
+                      )}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -481,10 +363,32 @@ const TicketDetails = () => {
                           </Button>
                         )}
                         <Button
-                          onClick={() => handleAddComment(replyTo || undefined)}
-                          disabled={!comment.trim()}
+                          onClick={() => {
+                            if (!comment.trim() || !user) return;
+                            const newComment = {
+                              content: comment,
+                              parent_id: replyTo || null,
+                            };
+                            toast.promise(
+                              createComment.mutateAsync(newComment),
+                              {
+                                loading: "Adding comment...",
+                                success: () => {
+                                  setComment("");
+                                  setReplyTo(null);
+                                  setShowCommentInput(false);
+                                  return "Comment added successfully";
+                                },
+                                error: "Failed to add comment",
+                              }
+                            );
+                          }}
+                          disabled={!comment.trim() || createComment.isPending}
                         >
                           {replyTo ? "Add Reply" : "Add Comment"}
+                          {createComment.isPending && (
+                            <Loader2 className="h-4 w-4 ml-2 animate-spin" />
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -492,14 +396,36 @@ const TicketDetails = () => {
                 </div>
                 <Separator />
                 <div className="space-y-4">
-                  {comments.map((comment) => (
-                    <CommentItem
-                      key={comment.id}
-                      comment={comment}
-                      onReply={setReplyTo}
-                      setShowCommentInput={setShowCommentInput}
-                    />
-                  ))}
+                  {isLoadingComments ? (
+                    <div className="space-y-4">
+                      {[1, 2, 3].map((i) => (
+                        <div
+                          key={i}
+                          className="flex gap-4"
+                        >
+                          <Skeleton className="h-10 w-10 rounded-full" />
+                          <div className="flex-1 space-y-2">
+                            <Skeleton className="h-4 w-32" />
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-8 w-24" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : comments?.length === 0 ? (
+                    <p className="text-center text-muted-foreground py-4">
+                      No comments yet. Be the first to comment!
+                    </p>
+                  ) : (
+                    comments?.map((comment) => (
+                      <CommentItem
+                        key={comment.id}
+                        comment={comment}
+                        onReply={setReplyTo}
+                        setShowCommentInput={setShowCommentInput}
+                      />
+                    ))
+                  )}
                 </div>
               </CardContent>
             </Card>

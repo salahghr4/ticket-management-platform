@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\TicketCommentController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/me', function (Request $request) {
-        return $request->user();
+        return $request->user()->load('department');
     });
 
     Route::get('tickets/stats', [TicketController::class, 'stats'])->name('tickets.stats');
@@ -25,5 +26,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('users/department/{departmentId}', [UserController::class, 'department'])->name('users.department');
     Route::apiResource('users', UserController::class);
     Route::apiResource('departments', DepartmentController::class);
+    Route::apiResource('tickets/{ticket}/comments', TicketCommentController::class)->except(['show']);
+    // Replies
+    Route::get('comments/{comment}/replies', [TicketCommentController::class, 'replies'])->name('comments.replies');
+    Route::post('comments/{comment}/replies', [TicketCommentController::class, 'storeReply'])->name('comments.replies.store');
+    Route::put('comments/{comment}/replies/{reply}', [TicketCommentController::class, 'updateReply'])->name('comments.replies.update');
+    Route::delete('comments/{comment}/replies/{reply}', [TicketCommentController::class, 'destroyReply'])->name('comments.replies.destroy');
+
 });
 

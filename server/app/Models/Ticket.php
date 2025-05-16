@@ -50,7 +50,7 @@ class Ticket extends Model
 
     public function comments()
     {
-        return $this->hasMany(TicketComment::class);
+        return $this->hasMany(TicketComment::class, 'ticket_id');
     }
 
     public function attachments()
