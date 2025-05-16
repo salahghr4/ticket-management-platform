@@ -8,7 +8,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
-import { useDeleteComment, useUpdateComment } from "@/hooks/useComments";
+import {
+  useDeleteComment,
+  useUpdateComment,
+  useCommentReplies,
+} from "@/hooks/useComments";
 import { formatDate } from "@/lib/format";
 import { Comment } from "@/types/comments";
 import {
@@ -21,17 +25,20 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface CommentItemProps {
   comment: Comment;
   onReply: (commentId: number) => void;
   setShowCommentInput: (show: boolean) => void;
+  isReply?: boolean;
 }
 
 export const CommentItem = ({
   comment,
   onReply,
   setShowCommentInput,
+  isReply = false,
 }: CommentItemProps) => {
   const [showReplies, setShowReplies] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -39,6 +46,11 @@ export const CommentItem = ({
   const { user } = useAuth();
   const updateComment = useUpdateComment(comment.ticket_id, comment.id);
   const deleteComment = useDeleteComment(comment.ticket_id, comment.id);
+  const {
+    data: replies,
+    isLoading: isLoadingReplies,
+    refetch,
+  } = useCommentReplies(comment.ticket_id, comment.id);
 
   const isEdited =
     new Date(comment.created_at).getTime() !==
@@ -47,6 +59,9 @@ export const CommentItem = ({
 
   const handleShowReplies = async () => {
     setShowReplies(true);
+    if (!showReplies) {
+      await refetch();
+    }
   };
 
   const handleEdit = () => {
@@ -66,6 +81,9 @@ export const CommentItem = ({
         loading: "Updating comment...",
         success: () => {
           setIsEditing(false);
+          if (isReply) {
+            refetch();
+          }
           return "Comment updated successfully";
         },
         error: "Failed to update comment",
@@ -76,7 +94,12 @@ export const CommentItem = ({
   const handleDelete = () => {
     toast.promise(deleteComment.mutateAsync(), {
       loading: "Deleting comment...",
-      success: "Comment deleted successfully",
+      success: () => {
+        if (isReply) {
+          refetch();
+        }
+        return "Comment deleted successfully";
+      },
       error: "Failed to delete comment",
     });
   };
@@ -177,7 +200,7 @@ export const CommentItem = ({
                 >
                   Reply
                 </Button>
-                {comment.replies_count > 0 && !showReplies && (
+                {!isReply && comment.replies_count > 0 && !showReplies && (
                   <Button
                     variant="ghost"
                     size="sm"
@@ -196,9 +219,36 @@ export const CommentItem = ({
       </div>
 
       {/* Replies Section */}
-      {showReplies && (
+      {!isReply && showReplies && (
         <div className="ml-12 space-y-4">
-          {/* Replies content will be implemented later */}
+          {isLoadingReplies ? (
+            <div className="space-y-4">
+              {[1].map((i) => (
+                <div
+                  key={i}
+                  className="flex gap-4"
+                >
+                  <Skeleton className="h-10 w-10 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-4 w-full" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : replies?.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No replies yet</p>
+          ) : (
+            replies?.map((reply) => (
+              <CommentItem
+                key={reply.id}
+                comment={reply}
+                onReply={onReply}
+                setShowCommentInput={setShowCommentInput}
+                isReply={true}
+              />
+            ))
+          )}
         </div>
       )}
     </div>

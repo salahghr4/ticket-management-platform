@@ -27,7 +27,7 @@ export const useCommentReplies = (ticketId: number, commentId: number) => {
   return useQuery<Comment[]>({
     queryKey: commentKeys.replies(ticketId, commentId),
     queryFn: () => commentsService.getCommentReplies(ticketId, commentId),
-    enabled: false, // This will be manually triggered when needed
+    enabled: !!ticketId && !!commentId, // Enable when both IDs are available
   });
 };
 
@@ -66,6 +66,9 @@ export const useUpdateComment = (ticketId: number, commentId: number) => {
       queryClient.invalidateQueries({
         queryKey: commentKeys.detail(ticketId, commentId),
       });
+      queryClient.invalidateQueries({
+        queryKey: commentKeys.replies(ticketId, commentId),
+      });
     },
   });
 };
@@ -79,6 +82,9 @@ export const useDeleteComment = (ticketId: number, commentId: number) => {
       queryClient.invalidateQueries({ queryKey: commentKeys.list(ticketId) });
       queryClient.invalidateQueries({
         queryKey: commentKeys.detail(ticketId, commentId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: commentKeys.replies(ticketId, commentId),
       });
     },
   });

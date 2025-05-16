@@ -8,14 +8,31 @@ use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+
 class TicketCommentController extends Controller
 {
     public function index(Ticket $ticket)
     {
         // Get all comments for the ticket, including replies ordered by created_at only for the top level comments
-        $comments = $ticket->comments()->with(['user:id,name'])->whereNull('parent_id')->latest()->withCount('replies')->get();
+        $comments = $ticket->comments()
+            ->with(['user:id,name'])
+            ->whereNull('parent_id')
+            ->latest()
+            ->withCount('replies')
+            ->get();
         return response()->json($comments);
     }
+
+    public function getReplies(Ticket $ticket, TicketComment $comment)
+    {
+        // Get all replies for a specific comment
+        $replies = $comment->replies()
+            ->with(['user:id,name'])
+            ->latest()
+            ->get();
+        return response()->json($replies);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -27,10 +44,30 @@ class TicketCommentController extends Controller
             'content' => 'required|string',
             'parent_id' => 'nullable|exists:ticket_comments,id',
         ]);
+
+        // Ensure parent_id belongs to the same ticket
+        if ($validated['parent_id']) {
+            $parentComment = TicketComment::findOrFail($validated['parent_id']);
+            if ($parentComment->ticket_id !== $ticket->id) {
+                return response()->json([
+                    'message' => 'Parent comment does not belong to this ticket',
+                    'success' => false
+                ], 422);
+            }
+        }
+
         $validated['ticket_id'] = $ticket->id;
         $validated['user_id'] = Auth::user()->id;
         $comment = TicketComment::create($validated);
-        return response()->json(['message' => 'Comment created successfully', 'comment' => $comment, 'success' => true]);
+
+        // Load the user relationship for the response
+        $comment->load('user:id,name');
+
+        return response()->json([
+            'message' => 'Comment created successfully',
+            'comment' => $comment,
+            'success' => true
+        ]);
     }
 
     /**
@@ -42,10 +79,16 @@ class TicketCommentController extends Controller
 
         $validated = $request->validate([
             'content' => 'required|string',
-            'parent_id' => 'nullable|exists:ticket_comments,id',
         ]);
+
         $comment->update($validated);
-        return response()->json(['message' => 'Comment updated successfully', 'comment' => $comment, 'success' => true]);
+        $comment->load('user:id,name');
+
+        return response()->json([
+            'message' => 'Comment updated successfully',
+            'comment' => $comment,
+            'success' => true
+        ]);
     }
 
     /**
@@ -55,7 +98,16 @@ class TicketCommentController extends Controller
     {
         Gate::authorize('delete', $comment);
 
+        // // If it's a parent comment, delete all replies first
+        // if ($comment->replies()->exists()) {
+        //     $comment->replies()->delete();
+        // }
+
         $comment->delete();
-        return response()->json(['message' => 'Comment deleted successfully', 'success' => true]);
+
+        return response()->json([
+            'message' => 'Comment deleted successfully',
+            'success' => true
+        ]);
     }
 }

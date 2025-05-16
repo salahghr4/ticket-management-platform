@@ -33,5 +33,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('comments/{comment}/replies/{reply}', [TicketCommentController::class, 'updateReply'])->name('comments.replies.update');
     Route::delete('comments/{comment}/replies/{reply}', [TicketCommentController::class, 'destroyReply'])->name('comments.replies.destroy');
 
+    // Ticket Comments
+    Route::get('/tickets/{ticket}/comments', [TicketCommentController::class, 'index']);
+    Route::get('/tickets/{ticket}/comments/{comment}/replies', [TicketCommentController::class, 'getReplies']);
+    Route::post('/tickets/{ticket}/comments', [TicketCommentController::class, 'store']);
+    Route::put('/tickets/{ticket}/comments/{comment}', [TicketCommentController::class, 'update']);
+    Route::delete('/tickets/{ticket}/comments/{comment}', [TicketCommentController::class, 'destroy']);
 });
-
