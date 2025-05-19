@@ -27,7 +27,7 @@ export const useCommentReplies = (ticketId: number, commentId: number) => {
   return useQuery<Comment[]>({
     queryKey: commentKeys.replies(ticketId, commentId),
     queryFn: () => commentsService.getCommentReplies(ticketId, commentId),
-    enabled: !!ticketId && !!commentId, // Enable when both IDs are available
+    enabled: !!ticketId || !!commentId,
   });
 };
 
@@ -61,11 +61,13 @@ export const useUpdateComment = (ticketId: number, commentId: number) => {
   >({
     mutationFn: (comment) =>
       commentsService.updateComment(ticketId, commentId, comment),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: commentKeys.list(ticketId) });
-      queryClient.invalidateQueries({
-        queryKey: commentKeys.detail(ticketId, commentId),
-      });
+      if (variables.parent_id) {
+        queryClient.invalidateQueries({
+          queryKey: commentKeys.replies(ticketId, variables.parent_id),
+        });
+      }
       queryClient.invalidateQueries({
         queryKey: commentKeys.replies(ticketId, commentId),
       });
@@ -73,7 +75,11 @@ export const useUpdateComment = (ticketId: number, commentId: number) => {
   });
 };
 
-export const useDeleteComment = (ticketId: number, commentId: number) => {
+export const useDeleteComment = (
+  ticketId: number,
+  commentId: number,
+  parentId: number
+) => {
   const queryClient = useQueryClient();
 
   return useMutation<CommentResponse, Error, void>({
@@ -81,10 +87,7 @@ export const useDeleteComment = (ticketId: number, commentId: number) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: commentKeys.list(ticketId) });
       queryClient.invalidateQueries({
-        queryKey: commentKeys.detail(ticketId, commentId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: commentKeys.replies(ticketId, commentId),
+        queryKey: commentKeys.replies(ticketId, parentId),
       });
     },
   });

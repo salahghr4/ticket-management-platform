@@ -45,12 +45,15 @@ export const CommentItem = ({
   const [editedContent, setEditedContent] = useState(comment.content);
   const { user } = useAuth();
   const updateComment = useUpdateComment(comment.ticket_id, comment.id);
-  const deleteComment = useDeleteComment(comment.ticket_id, comment.id);
-  const {
-    data: replies,
-    isLoading: isLoadingReplies,
-    refetch,
-  } = useCommentReplies(comment.ticket_id, comment.id);
+  const deleteComment = useDeleteComment(
+    comment.ticket_id,
+    comment.id,
+    comment.parent_id ?? comment.id
+  );
+  const { data: replies, isLoading: isLoadingReplies } = useCommentReplies(
+    comment.ticket_id,
+    comment.parent_id ?? comment.id
+  );
 
   const isEdited =
     new Date(comment.created_at).getTime() !==
@@ -59,9 +62,6 @@ export const CommentItem = ({
 
   const handleShowReplies = async () => {
     setShowReplies(true);
-    if (!showReplies) {
-      await refetch();
-    }
   };
 
   const handleEdit = () => {
@@ -69,7 +69,7 @@ export const CommentItem = ({
     setEditedContent(comment.content);
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (!editedContent.trim()) return;
 
     toast.promise(
@@ -81,9 +81,6 @@ export const CommentItem = ({
         loading: "Updating comment...",
         success: () => {
           setIsEditing(false);
-          if (isReply) {
-            refetch();
-          }
           return "Comment updated successfully";
         },
         error: "Failed to update comment",
@@ -95,13 +92,19 @@ export const CommentItem = ({
     toast.promise(deleteComment.mutateAsync(), {
       loading: "Deleting comment...",
       success: () => {
-        if (isReply) {
-          refetch();
-        }
         return "Comment deleted successfully";
       },
       error: "Failed to delete comment",
     });
+  };
+
+  const handleReply = () => {
+    // If this is a reply, use the original parent_id (top-level comment)
+    // Otherwise use this comment's ID
+    const parentId =
+      isReply && comment.parent_id ? comment.parent_id : comment.id;
+    onReply(parentId);
+    setShowCommentInput(true);
   };
 
   return (
@@ -193,10 +196,7 @@ export const CommentItem = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => {
-                    onReply(comment.id);
-                    setShowCommentInput(true);
-                  }}
+                  onClick={handleReply}
                 >
                   Reply
                 </Button>

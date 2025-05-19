@@ -28,7 +28,6 @@ class TicketCommentController extends Controller
         // Get all replies for a specific comment
         $replies = $comment->replies()
             ->with(['user:id,name'])
-            ->latest()
             ->get();
         return response()->json($replies);
     }
