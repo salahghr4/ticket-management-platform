@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Gate;
+
 class TicketController extends Controller
 {
 
@@ -78,7 +80,11 @@ class TicketController extends Controller
             ], 422);
         }
 
-        $ticket->update($validator->validated());
+        $data = $validator->validated();
+
+        $data['updated_by'] = $request->user()->id;
+
+        $ticket->update($data);
 
         return response()->json([
             'success' => true,
@@ -116,7 +122,17 @@ class TicketController extends Controller
             ], 404);
         }
 
-        return response()->json(['success' => true, 'ticket' => $ticket->load(['user:id,name,email', 'assignee:id,name,email', 'department:id,name'])]);
+        $ticket->load([
+            'user:id,name,email',
+            'assignee:id,name,email',
+            'department:id,name',
+            'history' => function ($query) {
+                $query->with(['user:id,name,email'])
+                    ->orderBy('created_at', 'desc');
+            }
+        ]);
+
+        return response()->json(['success' => true, 'ticket' => $ticket]);
     }
 
     public function stats()

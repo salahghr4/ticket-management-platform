@@ -18,6 +18,7 @@ class Ticket extends Model
         'assigned_to',
         'due_date',
         'department_id',
+        'updated_by',
     ];
 
     protected $casts = [

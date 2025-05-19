@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('ticket_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained();
-            $table->string('status_from')->nullable();
-            $table->string('status_to')->nullable();
-            $table->text('description');
+            $table->string('action_type'); // created, status_changed, assigned_changed, updated
+            $table->string('field_name')->nullable(); // status, assigned_to, title, description, priority
+            $table->text('old_value')->nullable();
+            $table->text('new_value')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

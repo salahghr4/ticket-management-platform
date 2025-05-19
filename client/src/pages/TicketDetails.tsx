@@ -34,6 +34,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { CommentItem } from "@/components/Comment/CommentItem";
 import { Skeleton } from "@/components/ui/skeleton";
+import TicketHistory from "@/components/Ticket/TicketHistory";
 
 const TicketDetails = () => {
   const { id } = useParams();
@@ -431,6 +432,18 @@ const TicketDetails = () => {
                     ))
                   )}
                 </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Ticket History */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Ticket History</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <TicketHistory history={ticket.history || []} />
               </CardContent>
             </Card>
           </div>

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->enum('status', ['open', 'in progress', 'resolved', 'closed', 'rejected'])->default('open');
             $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
             $table->timestamp('due_date')->nullable();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
         });
     }

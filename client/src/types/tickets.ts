@@ -1,22 +1,52 @@
-import { User } from "@/types/auth";
-import { Department } from "@/types/department";
 
-export type Ticket = {
+export interface TicketHistory {
+  id: number;
+  ticket_id: number;
+  user_id: number;
+  action_type: string;
+  field_name: string | null;
+  old_value: string | null;
+  new_value: string | null;
+  description: string;
+  created_at: string;
+  updated_at: string;
+  user?: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  formatted_old_value?: string;
+  formatted_new_value?: string;
+}
+
+export interface Ticket {
   id: number;
   title: string;
   description: string;
+  status: "open" | "in progress" | "resolved" | "closed" | "rejected";
+  priority: "low" | "medium" | "high";
   department_id: number;
   user_id: number;
   assigned_to: number | null;
-  status: "open" | "in progress" | "resolved" | "closed" | "rejected";
-  priority: "low" | "medium" | "high";
   due_date: Date | null;
   created_at: Date;
   updated_at: Date;
-  user: User;
-  assignee: User | null;
-  department: Department;
-};
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  assignee?: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  department: {
+    id: number;
+    name: string;
+  };
+  history?: TicketHistory[];
+}
 
 export type TicketStats = {
   totalTickets: number;
