@@ -49,6 +49,9 @@ const TicketDetails = () => {
     Number(id)
   );
   const createComment = useCreateComment(Number(id));
+  const canReply =
+    ticketData?.ticket?.department_id === user?.department_id ||
+    user?.role === "admin";
 
   if (isLoading) {
     return <Loader />;
@@ -423,6 +426,7 @@ const TicketDetails = () => {
                         comment={comment}
                         onReply={setReplyTo}
                         setShowCommentInput={setShowCommentInput}
+                        canReply={canReply}
                       />
                     ))
                   )}

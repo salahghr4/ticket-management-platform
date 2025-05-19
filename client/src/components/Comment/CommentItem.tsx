@@ -21,6 +21,7 @@ import {
   Edit,
   Loader2,
   MoreVertical,
+  Reply,
   Trash,
 } from "lucide-react";
 import { useState } from "react";
@@ -32,6 +33,7 @@ interface CommentItemProps {
   onReply: (commentId: number) => void;
   setShowCommentInput: (show: boolean) => void;
   isReply?: boolean;
+  canReply?: boolean;
 }
 
 export const CommentItem = ({
@@ -39,6 +41,7 @@ export const CommentItem = ({
   onReply,
   setShowCommentInput,
   isReply = false,
+  canReply,
 }: CommentItemProps) => {
   const [showReplies, setShowReplies] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -193,13 +196,16 @@ export const CommentItem = ({
             <>
               <p className="text-sm">{comment.content}</p>
               <div className="flex items-center gap-4">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleReply}
-                >
-                  Reply
-                </Button>
+                {canReply && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="gap-2"
+                    onClick={handleReply}
+                  >
+                    Reply
+                  </Button>
+                )}
                 {!isReply && comment.replies_count > 0 && !showReplies && (
                   <Button
                     variant="ghost"
@@ -240,13 +246,28 @@ export const CommentItem = ({
             <p className="text-sm text-muted-foreground">No replies yet</p>
           ) : (
             replies?.map((reply) => (
-              <CommentItem
+              <div
                 key={reply.id}
-                comment={reply}
-                onReply={onReply}
-                setShowCommentInput={setShowCommentInput}
-                isReply={true}
-              />
+                className="space-y-2"
+              >
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <span>
+                    Replying to{" "}
+                    <span className="font-medium text-foreground">
+                      {comment.user.name}
+                    </span>
+                    &apos;s comment
+                  </span>
+                  <Reply className="h-4 w-4" />
+                </div>
+                <CommentItem
+                  comment={reply}
+                  onReply={onReply}
+                  setShowCommentInput={setShowCommentInput}
+                  isReply={true}
+                  canReply={canReply}
+                />
+              </div>
             ))
           )}
         </div>
