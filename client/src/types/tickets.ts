@@ -1,4 +1,3 @@
-
 export interface TicketHistory {
   id: number;
   ticket_id: number;
@@ -46,6 +45,7 @@ export interface Ticket {
     name: string;
   };
   history?: TicketHistory[];
+  attachments: Attachment[];
 }
 
 export type TicketStats = {
@@ -74,4 +74,15 @@ export type TicketResponse = {
   success: boolean;
   message: string;
   ticket: Ticket;
+};
+
+export type Attachment = {
+  id: number;
+  ticket_id: number;
+  file_url: string;
+  file_name: string;
+  file_type: string;
+  file_size: number;
+  created_at: Date;
+  updated_at: Date;
 };

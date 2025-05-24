@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\TicketCommentController;
@@ -39,4 +40,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tickets/{ticket}/comments', [TicketCommentController::class, 'store']);
     Route::put('/tickets/{ticket}/comments/{comment}', [TicketCommentController::class, 'update']);
     Route::delete('/tickets/{ticket}/comments/{comment}', [TicketCommentController::class, 'destroy']);
+
+    Route::apiResource('/tickets/{ticket}/attachments', AttachmentController::class)->except(["show", 'update']);
 });

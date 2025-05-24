@@ -30,6 +30,9 @@ const ticketService = {
 
   create: async (ticket: TicketFormValues): Promise<TicketResponse> => {
     return await api<TicketResponse>({
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
       method: "POST",
       url: "/tickets",
       data: ticket,

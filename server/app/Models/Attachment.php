@@ -11,10 +11,15 @@ class Attachment extends Model
 
     protected $fillable = [
         'ticket_id',
-        'filename',
-        'path',
-        'mime_type',
-        'size',
+        'file_url',
+        'file_type',
+        'file_name',
+        'file_size',
+        'public_id'
+    ];
+
+    protected $hidden = [
+        'public_id',
     ];
 
     public function ticket()

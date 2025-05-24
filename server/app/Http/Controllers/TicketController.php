@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
+use App\Models\Attachment;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Gate;
 
@@ -14,7 +14,12 @@ class TicketController extends Controller
 
     public function index()
     {
-        return response()->json(['success' => true, 'tickets' => Ticket::with('user:id,name,email', 'assignee:id,name,email', 'department:id,name')->orderBy('created_at', 'desc')->get()]);
+        return response()->json([
+            'success' => true,
+            'tickets' => Ticket::with('user:id,name,email', 'assignee:id,name,email', 'department:id,name')
+                ->orderBy('created_at', 'desc')
+                ->get()
+        ]);
     }
 
 
@@ -81,7 +86,6 @@ class TicketController extends Controller
         }
 
         $data = $validator->validated();
-
         $data['updated_by'] = $request->user()->id;
 
         $ticket->update($data);
