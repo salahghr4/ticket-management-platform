@@ -132,7 +132,7 @@ class TicketController extends Controller
             'department:id,name',
             'history' => function ($query) {
                 $query->with(['user:id,name,email'])
-                    ->orderBy('created_at', 'desc');
+                    ->orderBy('id', 'desc');
             }
         ]);
 

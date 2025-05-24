@@ -1,3 +1,4 @@
+import { ticketKeys } from "@/hooks/useTickets";
 import attachmentService from "@/services/attachments";
 import { attachmentFormValues } from "@/validation/attachments";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -34,7 +35,11 @@ export const useCreateAttachment = () => {
       queryClient.invalidateQueries({
         queryKey: attachmentKeys.list(ticketId),
       });
+      queryClient.invalidateQueries({
+        queryKey: ticketKeys.detail(ticketId),
+      });
     },
+
   });
 };
 
@@ -46,6 +51,9 @@ export const useDeleteAttachment = (ticketId: number, attachmentId: number) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: attachmentKeys.list(ticketId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ticketKeys.detail(ticketId),
       });
     },
   });

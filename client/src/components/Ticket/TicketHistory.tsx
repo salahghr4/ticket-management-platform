@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { TicketHistory as TicketHistoryType } from "@/types/tickets";
-import { Building, Calendar, Flag, Info, User } from "lucide-react";
+import { Building, Calendar, Flag, Info, Paperclip, User } from "lucide-react";
 
 interface TicketHistoryProps {
   history: TicketHistoryType[];
@@ -33,6 +33,20 @@ const getActionTypeStyles = (actionType: string) => {
         badge:
           "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800",
         border: "border-l-purple-500",
+      };
+    case "attachment_added":
+      return {
+        icon: "text-green-600 dark:text-green-400",
+        badge:
+          "bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800",
+        border: "border-l-green-500",
+      };
+    case "attachment_deleted":
+      return {
+        icon: "text-red-600 dark:text-red-400",
+        badge:
+          "bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800",
+        border: "border-l-red-500",
       };
     case "updated":
       return {
@@ -64,6 +78,8 @@ const getHistoryIcon = (fieldName: string, actionType: string) => {
       return <Building className={cn("h-4 w-4", styles.icon)} />;
     case "due_date":
       return <Calendar className={cn("h-4 w-4", styles.icon)} />;
+    case "attachments":
+      return <Paperclip className={cn("h-4 w-4", styles.icon)} />;
     default:
       return null;
   }
@@ -85,6 +101,10 @@ const TicketHistory = ({ history }: TicketHistoryProps) => {
       <div className="space-y-4">
         {history.map((item) => {
           const styles = getActionTypeStyles(item.action_type);
+          const isAttachmentAction =
+            item.action_type === "attachment_added" ||
+            item.action_type === "attachment_deleted";
+
           return (
             <Card
               key={item.id}
@@ -116,7 +136,7 @@ const TicketHistory = ({ history }: TicketHistoryProps) => {
                             item.field_name || "",
                             item.action_type
                           )}
-                          {item.description.replace("_", " ")}
+                          {item.description}
                         </Badge>
                       </div>
                       <span className="text-xs text-muted-foreground">
@@ -124,7 +144,7 @@ const TicketHistory = ({ history }: TicketHistoryProps) => {
                       </span>
                     </div>
 
-                    {item.field_name && (
+                    {item.field_name && !isAttachmentAction && (
                       <div className="flex flex-wrap items-center gap-2 text-sm">
                         <span className="text-muted-foreground">
                           Changed from
@@ -141,6 +161,19 @@ const TicketHistory = ({ history }: TicketHistoryProps) => {
                           className="font-normal bg-muted/50"
                         >
                           {item.formatted_new_value || "No value"}
+                        </Badge>
+                      </div>
+                    )}
+
+                    {isAttachmentAction && (
+                      <div className="flex flex-wrap items-center gap-2 text-sm">
+                        <Badge
+                          variant="outline"
+                          className="font-normal bg-muted/50"
+                        >
+                          {item.action_type === "attachment_added"
+                            ? item.new_value
+                            : item.old_value}
                         </Badge>
                       </div>
                     )}

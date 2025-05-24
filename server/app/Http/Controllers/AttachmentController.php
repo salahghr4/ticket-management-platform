@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -56,6 +57,18 @@ class AttachmentController extends Controller
                     'file_size' => $uploadedFile['bytes'],
                     'public_id' => $uploadedFile['public_id'],
                 ]);
+
+                $ticket->history()->create([
+                    'action_type' => 'attachment_added',
+                    'field_name' => 'attachments',
+                    'old_value' => null,
+                    'new_value' => $file->getClientOriginalName(),
+                    'description' => 'Attachment added',
+                    'user_id' => $request->user()->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
             } catch (\Throwable $th) {
                 return response()->json([
                     'success' => false,
@@ -85,6 +98,16 @@ class AttachmentController extends Controller
 
             $attachment->delete();
 
+            $ticket->history()->create([
+                'action_type' => 'attachment_deleted',
+                'field_name' => 'attachments',
+                'old_value' => $attachment->file_name,
+                'new_value' => null,
+                'description' => 'Attachment deleted',
+                'user_id' => Auth::user()->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
             return response()->json([
                 'success' => true,
                 'message' => 'Attachment deleted successfully',
