@@ -13,9 +13,10 @@ class TicketCommentController extends Controller
 {
     public function index(Ticket $ticket)
     {
-        // Get all comments for the ticket, including replies ordered by created_at only for the top level comments
+        // Get all comments for the ticket
         $comments = $ticket->comments()
             ->with(['user:id,name'])
+            ->withCount('replies')
             ->whereNull('parent_id')
             ->latest()
             ->withCount('replies')

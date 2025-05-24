@@ -10,7 +10,6 @@ type Comment = {
     id: number;
     name: string;
   };
-  replies: Comment[];
   replies_count: number;
 };
 

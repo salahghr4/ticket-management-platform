@@ -42,7 +42,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import TicketHistory from "@/components/Ticket/TicketHistory";
 import AttachmentModal from "@/components/Ticket/AttachmentModel";
 import DeleteAttachmentModal from "@/components/Ticket/DeleteAttachmentModal";
-import { Attachment } from "@/types/tickets";
+import { Attachment, Ticket } from "@/types/tickets";
 import { useAttachments } from "@/hooks/useAttachments";
 
 const TicketDetails = () => {
@@ -62,23 +62,10 @@ const TicketDetails = () => {
   const { data: attachments, isLoading: isLoadingAttachments } = useAttachments(
     ticketData?.ticket?.id
   );
-  const canReply =
-    ticketData?.ticket?.department_id === user?.department_id ||
-    user?.role === "admin";
   const [deleteAttachment, setDeleteAttachment] = useState<Attachment | null>(
     null
   );
   const [isOpen, setIsOpen] = useState(false);
-
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (!ticketData?.ticket) {
-    return <TicketNotFound />;
-  }
-
-  const ticket = ticketData.ticket;
 
   // Convert file size to appropriate unit
   const formatFileSize = (bytes: number) => {
@@ -91,6 +78,140 @@ const TicketDetails = () => {
     }
   };
 
+  // Calculate time in current status
+  const getTimeInStatus = (ticket: Ticket) => {
+    const statusHistory = ticket.history?.filter(
+      (h) => h.action_type === "status_changed"
+    );
+
+    // If no status changes, use creation time
+    if (!statusHistory?.length) {
+      const timeInStatus = Math.max(
+        0,
+        new Date().getTime() - new Date(ticket.created_at).getTime()
+      );
+      const days = Math.floor(timeInStatus / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (timeInStatus % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      return `${days}d ${hours}h`;
+    }
+
+    const lastStatusChange = statusHistory[statusHistory.length - 1];
+    const timeInStatus = Math.max(
+      0,
+      new Date().getTime() - new Date(lastStatusChange.created_at).getTime()
+    );
+    const days = Math.floor(timeInStatus / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (timeInStatus % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    return `${days}d ${hours}h`;
+  };
+
+  // Calculate response time
+  const getResponseTime = (ticket: Ticket) => {
+    const firstComment = comments?.[comments.length - 1];
+    if (!firstComment) return "No response yet";
+    const responseTime =
+      new Date(firstComment.created_at).getTime() -
+      new Date(ticket.created_at).getTime();
+    const hours = Math.floor(responseTime / (1000 * 60 * 60));
+    const minutes = Math.floor((responseTime % (1000 * 60 * 60)) / (1000 * 60));
+    return `${hours}h ${minutes}m`;
+  };
+
+  // Calculate resolution time
+  const getResolutionTime = (ticket: Ticket) => {
+    if (ticket.status !== "resolved" && ticket.status !== "closed") {
+      return "Not resolved";
+    }
+    const resolutionHistory = ticket.history?.find(
+      (h) => h.action_type === "status_changed" && h.new_value === "resolved"
+    );
+    if (!resolutionHistory) return "Not resolved";
+    const resolutionTime =
+      new Date(resolutionHistory.created_at).getTime() -
+      new Date(ticket.created_at).getTime();
+    const days = Math.floor(resolutionTime / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (resolutionTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    return `${days}d ${hours}h`;
+  };
+
+  // Calculate activity metrics
+  const getActivityMetrics = (ticket: Ticket) => {
+    const commentCount =
+      comments?.reduce((total, comment) => {
+        return total + 1 + (comment.replies_count || 0);
+      }, 0) || 0;
+    const attachmentCount = attachments?.length || 0;
+    const historyCount =
+      ticket.history?.filter(
+        (h) =>
+          h.action_type !== "attachment_added" &&
+          h.action_type !== "attachment_deleted"
+      ).length || 0;
+    const totalActivity = commentCount + attachmentCount + historyCount;
+    return {
+      commentCount,
+      attachmentCount,
+      historyCount,
+      totalActivity,
+    };
+  };
+
+  // Handle file download
+  const handleFileDownload = async (fileUrl: string, fileName: string) => {
+    try {
+      const response = await fetch(fileUrl);
+      if (!response.ok) {
+        toast.error("Failed to download file");
+        return;
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch {
+      toast.error("Failed to download file");
+    }
+  };
+
+  // Handle comment submission
+  const handleCommentSubmit = () => {
+    if (!comment.trim() || !user) return;
+    const newComment = {
+      content: comment,
+      parent_id: replyTo || null,
+    };
+    toast.promise(createComment.mutateAsync(newComment), {
+      loading: "Adding comment...",
+      success: () => {
+        setComment("");
+        setReplyTo(null);
+        setShowCommentInput(false);
+        return "Comment added successfully";
+      },
+      error: "Failed to add comment",
+    });
+  };
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (!ticketData?.ticket) {
+    return <TicketNotFound />;
+  }
+
+  const ticket = ticketData.ticket;
   const canDoActions =
     user?.role === "admin" || user?.department_id === ticket.department_id;
 
@@ -98,7 +219,7 @@ const TicketDetails = () => {
     <div className="container mx-auto py-8 px-6">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-y-2">
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
@@ -314,22 +435,47 @@ const TicketDetails = () => {
                     <p className="text-sm text-muted-foreground">
                       Time in Status
                     </p>
-                    <p className="font-medium">2 days</p>
+                    <p className="font-medium">{getTimeInStatus(ticket)}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-sm text-muted-foreground">
                       Response Time
                     </p>
-                    <p className="font-medium">5 hours</p>
+                    <p className="font-medium">{getResponseTime(ticket)}</p>
                   </div>
                   <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground">
+                      Resolution Time
+                    </p>
+                    <p className="font-medium">{getResolutionTime(ticket)}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground">
+                      Total Activity
+                    </p>
+                    <p className="font-medium">
+                      {getActivityMetrics(ticket).totalActivity}
+                    </p>
+                  </div>
+                </div>
+                <Separator />
+                <div className="flex flex-wrap justify-center gap-4">
+                  <div className="space-y-1">
                     <p className="text-sm text-muted-foreground">Comments</p>
-                    <p className="font-medium">{comments?.length ?? 0}</p>
+                    <p className="font-medium text-center">
+                      {getActivityMetrics(ticket).commentCount}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground">Attachments</p>
+                    <p className="font-medium text-center">
+                      {getActivityMetrics(ticket).attachmentCount}
+                    </p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-sm text-muted-foreground">Updates</p>
-                    <p className="font-medium">
-                      {ticket.created_at !== ticket.updated_at ? "Yes" : "No"}
+                    <p className="font-medium text-center">
+                      {getActivityMetrics(ticket).historyCount}
                     </p>
                   </div>
                 </div>
@@ -441,23 +587,10 @@ const TicketDetails = () => {
                                   size="sm"
                                   className="h-8"
                                   onClick={async () => {
-                                    const response = await fetch(
-                                      attachment.file_url
+                                    await handleFileDownload(
+                                      attachment.file_url,
+                                      attachment.file_name
                                     );
-                                    if (!response.ok) {
-                                      toast.error("Failed to download file");
-                                      return;
-                                    }
-                                    const blob = await response.blob();
-                                    const url =
-                                      window.URL.createObjectURL(blob);
-                                    const link = document.createElement("a");
-                                    link.href = url;
-                                    link.download = attachment.file_name;
-                                    document.body.appendChild(link);
-                                    link.click();
-                                    document.body.removeChild(link);
-                                    window.URL.revokeObjectURL(url);
                                   }}
                                 >
                                   <Download className="mr-2 h-4 w-4" />
@@ -568,26 +701,7 @@ const TicketDetails = () => {
                           </Button>
                         )}
                         <Button
-                          onClick={() => {
-                            if (!comment.trim() || !user) return;
-                            const newComment = {
-                              content: comment,
-                              parent_id: replyTo || null,
-                            };
-                            toast.promise(
-                              createComment.mutateAsync(newComment),
-                              {
-                                loading: "Adding comment...",
-                                success: () => {
-                                  setComment("");
-                                  setReplyTo(null);
-                                  setShowCommentInput(false);
-                                  return "Comment added successfully";
-                                },
-                                error: "Failed to add comment",
-                              }
-                            );
-                          }}
+                          onClick={handleCommentSubmit}
                           disabled={!comment.trim() || createComment.isPending}
                         >
                           {replyTo ? "Add Reply" : "Add Comment"}
@@ -628,7 +742,7 @@ const TicketDetails = () => {
                         comment={comment}
                         onReply={setReplyTo}
                         setShowCommentInput={setShowCommentInput}
-                        canReply={canReply}
+                        canReply={canDoActions}
                       />
                     ))
                   )}
