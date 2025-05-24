@@ -91,6 +91,9 @@ const TicketDetails = () => {
     }
   };
 
+  const canDoActions =
+    user?.role === "admin" || user?.department_id === ticket.department_id;
+
   return (
     <div className="container mx-auto py-8 px-6">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -115,8 +118,7 @@ const TicketDetails = () => {
               <h1 className="text-2xl font-bold">Ticket Details</h1>
             </div>
           </div>
-          {(user?.role === "admin" ||
-            user?.department_id === ticket.department_id) && (
+          {canDoActions && (
             <div className="flex items-center gap-3">
               <Button
                 onClick={() =>
@@ -133,7 +135,7 @@ const TicketDetails = () => {
               </Button>
               <Button
                 onClick={() =>
-                  navigate(`/tickets/${ticket.id}/edit`, {
+                  navigate(`/tickets/${ticket.id}/delete`, {
                     state: {
                       from: pathname,
                     },
@@ -344,8 +346,7 @@ const TicketDetails = () => {
                     <Paperclip className="h-5 w-5" />
                     Attachments
                   </div>
-                  {(user?.role === "admin" ||
-                    user?.department_id === ticket.department_id) && (
+                  {canDoActions && (
                     <AttachmentModal
                       ticketId={ticket.id}
                       trigger={
@@ -420,47 +421,50 @@ const TicketDetails = () => {
                               </div>
                             )}
                             {/* Overlay with actions */}
-                            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/60 opacity-0 transition-opacity group-hover:opacity-100">
-                              {(isImage || isPdf) && (
+                            {canDoActions && (
+                              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/60 opacity-0 transition-opacity group-hover:opacity-100">
+                                {(isImage || isPdf) && (
+                                  <Button
+                                    variant="secondary"
+                                    size="sm"
+                                    className="h-8"
+                                    onClick={() =>
+                                      window.open(attachment.file_url, "_blank")
+                                    }
+                                  >
+                                    <ImageIcon className="mr-2 h-4 w-4" />
+                                    View
+                                  </Button>
+                                )}
                                 <Button
                                   variant="secondary"
                                   size="sm"
                                   className="h-8"
-                                  onClick={() =>
-                                    window.open(attachment.file_url, "_blank")
-                                  }
+                                  onClick={async () => {
+                                    const response = await fetch(
+                                      attachment.file_url
+                                    );
+                                    if (!response.ok) {
+                                      toast.error("Failed to download file");
+                                      return;
+                                    }
+                                    const blob = await response.blob();
+                                    const url =
+                                      window.URL.createObjectURL(blob);
+                                    const link = document.createElement("a");
+                                    link.href = url;
+                                    link.download = attachment.file_name;
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                    window.URL.revokeObjectURL(url);
+                                  }}
                                 >
-                                  <ImageIcon className="mr-2 h-4 w-4" />
-                                  View
+                                  <Download className="mr-2 h-4 w-4" />
+                                  Download
                                 </Button>
-                              )}
-                              <Button
-                                variant="secondary"
-                                size="sm"
-                                className="h-8"
-                                onClick={async () => {
-                                  const response = await fetch(
-                                    attachment.file_url
-                                  );
-                                  if (!response.ok) {
-                                    toast.error("Failed to download file");
-                                    return;
-                                  }
-                                  const blob = await response.blob();
-                                  const url = window.URL.createObjectURL(blob);
-                                  const link = document.createElement("a");
-                                  link.href = url;
-                                  link.download = attachment.file_name;
-                                  document.body.appendChild(link);
-                                  link.click();
-                                  document.body.removeChild(link);
-                                  window.URL.revokeObjectURL(url);
-                                }}
-                              >
-                                <Download className="mr-2 h-4 w-4" />
-                                Download
-                              </Button>
-                            </div>
+                              </div>
+                            )}
                           </div>
 
                           {/* Info Section */}
@@ -484,9 +488,7 @@ const TicketDetails = () => {
                                   <span>{fileSize}</span>
                                 </div>
                               </div>
-                              {(user?.role === "admin" ||
-                                user?.department_id ===
-                                  ticket.department_id) && (
+                              {canDoActions && (
                                 <Button
                                   variant="ghost"
                                   size="icon"
@@ -517,8 +519,7 @@ const TicketDetails = () => {
                     <MessageSquare className="h-5 w-5" />
                     Comments
                   </div>
-                  {(ticket.department_id === user?.department_id ||
-                    user?.role === "admin") && (
+                  {canDoActions && (
                     <Button
                       variant="ghost"
                       size="icon"
