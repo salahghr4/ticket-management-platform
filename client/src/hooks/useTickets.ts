@@ -70,7 +70,7 @@ export const useDeleteTicket = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ticketService.delete,
+    mutationFn: (id: number) => ticketService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ticketKeys.lists() });
       queryClient.invalidateQueries({ queryKey: ticketKeys.stats() });

@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
 import { useComments, useCreateComment } from "@/hooks/useComments";
-import { useTicket } from "@/hooks/useTickets";
+import { useDeleteTicket, useTicket } from "@/hooks/useTickets";
 import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import {
@@ -44,6 +44,7 @@ import AttachmentModal from "@/components/Ticket/AttachmentModel";
 import DeleteAttachmentModal from "@/components/Ticket/DeleteAttachmentModal";
 import { Attachment, Ticket } from "@/types/tickets";
 import { useAttachments } from "@/hooks/useAttachments";
+import DeleteTicketDialog from "@/components/Ticket/DeleteTicketDialog";
 
 const TicketDetails = () => {
   const { id } = useParams();
@@ -62,10 +63,22 @@ const TicketDetails = () => {
   const { data: attachments, isLoading: isLoadingAttachments } = useAttachments(
     ticketData?.ticket?.id
   );
+  const deleteTicket = useDeleteTicket();
   const [deleteAttachment, setDeleteAttachment] = useState<Attachment | null>(
     null
   );
   const [isOpen, setIsOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const handleDeleteTicket = () =>
+    toast.promise(deleteTicket.mutateAsync(ticket.id), {
+      loading: "Deleting ticket...",
+      success: () => {
+        navigate(`/tickets`);
+        return `Ticket deleted successfully`;
+      },
+      error: "Error deleting ticket, please try again",
+    });
 
   // Convert file size to appropriate unit
   const formatFileSize = (bytes: number) => {
@@ -255,13 +268,7 @@ const TicketDetails = () => {
                 Edit Ticket
               </Button>
               <Button
-                onClick={() =>
-                  navigate(`/tickets/${ticket.id}/delete`, {
-                    state: {
-                      from: pathname,
-                    },
-                  })
-                }
+                onClick={() => setIsDeleteDialogOpen(true)}
                 className="gap-2"
                 variant="destructive"
               >
@@ -772,6 +779,12 @@ const TicketDetails = () => {
           attachment={deleteAttachment}
         />
       )}
+      <DeleteTicketDialog
+        ticket={ticket}
+        isOpen={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        onDelete={handleDeleteTicket}
+      />
     </div>
   );
 };
