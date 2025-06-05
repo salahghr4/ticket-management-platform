@@ -9,6 +9,7 @@ import Dashboard from "@/pages/Dashboard";
 import Departments from "@/pages/Departments";
 import EditUser from "@/pages/EditUser";
 import Login from "@/pages/Login";
+import NotFound from "@/pages/NotFound";
 import TicketDetails from "@/pages/TicketDetails";
 import TicketsAll from "@/pages/TicketsAll";
 import TicketsAssigned from "@/pages/TicketsAssigned";
@@ -53,6 +54,7 @@ function App() {
             </Route>
           </Route>
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
