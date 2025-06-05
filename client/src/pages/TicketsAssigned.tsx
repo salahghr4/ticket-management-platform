@@ -1,12 +1,12 @@
 import TicketTable from "@/components/Ticket/TicketTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useTickets } from "@/hooks/useTickets";
+import { useTicketsAssigned } from "@/hooks/useTickets";
 import { ArrowLeft, Plus, RefreshCw, Ticket as TicketIcon } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-const Tickets = () => {
-  const { data: ticketsData, isLoading, refetch, isFetching } = useTickets();
+const TicketsAssigned = () => {
+  const { data: ticketsData, isLoading, refetch, isFetching } = useTicketsAssigned("assigned");
   const navigate = useNavigate();
   const { pathname, state } = useLocation();
   const redirectUrl = state?.from || "/dashboard";
@@ -30,7 +30,7 @@ const Tickets = () => {
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold">Tickets</h1>
               <p className="text-muted-foreground text-sm sm:text-base">
-                Manage and track all your support tickets
+                Manage and track all your assigned support tickets
               </p>
             </div>
           </div>
@@ -81,4 +81,4 @@ const Tickets = () => {
   );
 };
 
-export default Tickets;
+export default TicketsAssigned;

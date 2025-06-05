@@ -21,6 +21,13 @@ const ticketService = {
     });
   },
 
+  getAssignedToMe: async (): Promise<TicketsResponse> => {
+    return await api<TicketsResponse>({
+      method: "GET",
+      url: "/tickets/assigned",
+    });
+  },
+
   getStats: async (): Promise<TicketStats> => {
     return await api<TicketStats>({
       method: "GET",

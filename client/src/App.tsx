@@ -1,21 +1,22 @@
 import Loader from "@/components/Logo/Loader";
+import ProtectedEditTicket from "@/components/Ticket/ProtectedEditTicket";
 import { useAuth } from "@/hooks/useAuth";
 import AppLayout from "@/layouts/AppLayout";
 import AuthLayout from "@/layouts/AuthLayout";
-import Dashboard from "@/pages/Dashboard";
-import Login from "@/pages/Login";
-import PrivateRoutes from "@/routes/PrivateRoutes";
-import PublicRoutes from "@/routes/PublicRoutes";
-import Tickets from "@/pages/Tickets";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import CreateTicket from "@/pages/CreateTicket";
+import CreateUser from "@/pages/CreateUser";
+import Dashboard from "@/pages/Dashboard";
+import Departments from "@/pages/Departments";
+import EditUser from "@/pages/EditUser";
+import Login from "@/pages/Login";
 import TicketDetails from "@/pages/TicketDetails";
-import ProtectedEditTicket from "@/components/Ticket/ProtectedEditTicket";
+import TicketsAll from "@/pages/TicketsAll";
+import TicketsAssigned from "@/pages/TicketsAssigned";
 import Users from "@/pages/Users";
 import AdminRoutes from "@/routes/AdminRoutes";
-import CreateUser from "@/pages/CreateUser";
-import EditUser from "@/pages/EditUser";
-import Departments from "@/pages/Departments";
+import PrivateRoutes from "@/routes/PrivateRoutes";
+import PublicRoutes from "@/routes/PublicRoutes";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 function App() {
   const { isLoading } = useAuth();
 
@@ -38,7 +39,9 @@ function App() {
           <Route element={<AppLayout />}>
             <Route path="/" element={<Navigate to="/dashboard" />}/>
             <Route path="/dashboard" element={<Dashboard />}/>
-            <Route path="/tickets" element={<Tickets />}/>
+            <Route path="/tickets" element={<Navigate to="/tickets/all" />}/>
+            <Route path="/tickets/all" element={<TicketsAll />}/>
+            <Route path="/tickets/assigned" element={<TicketsAssigned />}/>
             <Route path="/tickets/create" element={<CreateTicket />}/>
             <Route path="/tickets/:id" element={<TicketDetails />}/>
             <Route path="/tickets/:id/edit" element={<ProtectedEditTicket />}/>
