@@ -121,8 +121,6 @@ server/      # Laravel backend
 
 ---
 
----
-
 ## API Endpoints
 
 | Method | Endpoint | Params/Body(JSON) | Description               | Auth Required |
@@ -193,7 +191,6 @@ server/      # Laravel backend
 | PATCH  | /profile  | name, email                                       | Update profile  | Yes           |
 | PUT    | /password | current_password, password, password_confirmation | Change password | Yes           |
 
----
 
 > All endpoints (except /login) require authentication via Bearer token (Laravel Sanctum).
 
