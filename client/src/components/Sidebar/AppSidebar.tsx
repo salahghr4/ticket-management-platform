@@ -29,7 +29,7 @@ import {
   LayoutDashboard,
   Users,
 } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const AppSidebar = () => {
   // Menu items.
@@ -72,6 +72,9 @@ const AppSidebar = () => {
   const location = useLocation();
   const { open } = useSidebar();
   const { user } = useAuth();
+  const { state } = useSidebar();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   return (
     <Sidebar
@@ -101,6 +104,12 @@ const AppSidebar = () => {
                           <SidebarMenuButton
                             tooltip={item.title}
                             isActive={isParentActive}
+                            onClick={() => {
+                              if (state === "collapsed")
+                                return navigate("/tickets/all", {
+                                  state: { from: pathname },
+                                });
+                            }}
                           >
                             {item.icon && <item.icon />}
                             <span>{item.title}</span>
