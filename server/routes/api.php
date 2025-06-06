@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('tickets/stats', [TicketController::class, 'stats'])->name('tickets.stats');
     Route::get('/tickets/assigned', [TicketController::class, 'assigned'])->name('tickets.assigned');
+    Route::get('/tickets/created', [TicketController::class, 'created'])->name('tickets.created');
     Route::apiResource('tickets', TicketController::class);
     Route::apiResource('users', UserController::class);
 

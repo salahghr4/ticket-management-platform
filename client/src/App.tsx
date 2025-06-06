@@ -14,6 +14,7 @@ import Profile from "@/pages/Profile";
 import TicketDetails from "@/pages/TicketDetails";
 import TicketsAll from "@/pages/TicketsAll";
 import TicketsAssigned from "@/pages/TicketsAssigned";
+import TicketsCreated from "@/pages/TicketsCreated";
 import Users from "@/pages/Users";
 import AdminRoutes from "@/routes/AdminRoutes";
 import PrivateRoutes from "@/routes/PrivateRoutes";
@@ -44,6 +45,7 @@ function App() {
             <Route path="/tickets" element={<Navigate to="/tickets/all" />}/>
             <Route path="/tickets/all" element={<TicketsAll />}/>
             <Route path="/tickets/assigned" element={<TicketsAssigned />}/>
+            <Route path="/tickets/created" element={<TicketsCreated />}/>
             <Route path="/tickets/create" element={<CreateTicket />}/>
             <Route path="/tickets/:id" element={<TicketDetails />}/>
             <Route path="/tickets/:id/edit" element={<ProtectedEditTicket />}/>

@@ -29,6 +29,14 @@ export const useTicketsAssigned = (filters: string) => {
   });
 };
 
+export const useTicketsCreated = (filters: string) => {
+  return useQuery({
+    queryKey: ticketKeys.list(filters),
+    queryFn: () => ticketService.getCreatedByMe(),
+    enabled: !!filters,
+  });
+};
+
 export const useTicket = (id: number) => {
   return useQuery({
     queryKey: ticketKeys.detail(id),

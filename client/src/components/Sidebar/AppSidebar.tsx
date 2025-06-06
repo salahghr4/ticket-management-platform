@@ -49,8 +49,12 @@ const AppSidebar = () => {
           url: "/tickets/all",
         },
         {
-          title: "Assigned to Me",
+          title: "Assigned to me",
           url: "/tickets/assigned",
+        },
+        {
+          title: "Created by me",
+          url: "/tickets/created",
         },
       ],
     },

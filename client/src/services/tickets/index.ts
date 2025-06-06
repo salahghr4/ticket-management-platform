@@ -28,6 +28,13 @@ const ticketService = {
     });
   },
 
+  getCreatedByMe: async (): Promise<TicketsResponse> => {
+    return await api<TicketsResponse>({
+      method: "GET",
+      url: "/tickets/created",
+    });
+  },
+
   getStats: async (): Promise<TicketStats> => {
     return await api<TicketStats>({
       method: "GET",

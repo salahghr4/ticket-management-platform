@@ -155,6 +155,21 @@ class TicketController extends Controller
         ]);
     }
 
+    public function created()
+    {
+        $userId = Auth::user()->id;
+
+        $tickets = Ticket::where('user_id', $userId)
+            ->with(['user:id,name,email', 'assignee:id,name,email', 'department:id,name'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'tickets' => $tickets
+        ]);
+    }
+
     public function stats()
     {
         $openTickets = Ticket::where('status', 'open')->count();
