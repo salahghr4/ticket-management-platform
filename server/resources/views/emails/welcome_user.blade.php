@@ -76,7 +76,7 @@
 <body>
     <div class="container">
         <div class="logo">
-            <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('logo.png'))) }}" alt="TYTICKET Logo" />
+            <img src="{{ $message->embed(asset('logo.png')) }}" alt="TYTICKET Logo" />
         </div>
         <h1>Welcome to TYTICKET!</h1>
         <div class="subtitle">
