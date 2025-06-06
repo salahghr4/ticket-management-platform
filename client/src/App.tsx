@@ -10,6 +10,7 @@ import Departments from "@/pages/Departments";
 import EditUser from "@/pages/EditUser";
 import Login from "@/pages/Login";
 import NotFound from "@/pages/NotFound";
+import Profile from "@/pages/Profile";
 import TicketDetails from "@/pages/TicketDetails";
 import TicketsAll from "@/pages/TicketsAll";
 import TicketsAssigned from "@/pages/TicketsAssigned";
@@ -48,6 +49,7 @@ function App() {
             <Route path="/tickets/:id/edit" element={<ProtectedEditTicket />}/>
             <Route path="/users" element={<Users />}/>
             <Route path="/departments" element={<Departments />}/>
+            <Route path="/profile" element={<Profile />}/>
             <Route element={<AdminRoutes />}>
               <Route path="/admin/users/create" element={<CreateUser />}/>
               <Route path="/admin/users/:id/edit" element={<EditUser />}/>

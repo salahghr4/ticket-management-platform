@@ -3,6 +3,8 @@
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\PasswordController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TicketCommentController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
@@ -43,4 +45,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/tickets/{ticket}/comments/{comment}', [TicketCommentController::class, 'destroy']);
 
     Route::apiResource('/tickets/{ticket}/attachments', AttachmentController::class)->except(["show", 'update']);
+    Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 });

@@ -1,4 +1,4 @@
-import { ChevronsUpDown, LogOutIcon } from "lucide-react";
+import { ChevronsUpDown, LogOutIcon, User as UserIcon } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -18,11 +18,12 @@ import {
 import { User } from "@/types/auth";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export function NavUser({ user }: { user: User }) {
   const { isMobile } = useSidebar();
   const { logout } = useAuth();
-
+  const navigate = useNavigate();
   return (
     <SidebarMenu>
       <SidebarMenuItem className="">
@@ -74,6 +75,17 @@ export function NavUser({ user }: { user: User }) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() =>
+                navigate("/profile", {
+                  state: { from: window.location.pathname },
+                })
+              }
+              className="cursor-pointer"
+            >
+              <UserIcon />
+              Profile
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>
                 toast.promise(logout(), {
