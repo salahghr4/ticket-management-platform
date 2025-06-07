@@ -11,7 +11,7 @@ const TicketsAll = () => {
   const { pathname, state } = useLocation();
   const redirectUrl = state?.from || "/dashboard";
   return (
-    <div className="min-h-screen w-full flex justify-center px-4 py-6">
+    <div className="min-h-fit w-full flex justify-center px-4 py-6">
       <div className="w-[95%] space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center gap-3">
