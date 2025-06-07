@@ -37,6 +37,19 @@ TyTicket is a modern ticket management platform built with React (Vite), TypeScr
 
 ---
 
+## Screenshots
+
+|  |  |
+|---|---|
+|Login page|Dashboard page|
+| ![login](./client/public/LoginPage.png) | ![dashboard](./client/public/Dashboard.png) |
+|Tickets page|Create ticket|
+| ![ticketPage](./client/public/AllTickets.png) | ![createTicket](./client/public/TicktForm.png) |
+|User Page|Ticket Details|
+| ![userPage](./client/public/UserPage.png) | ![ticketDetails](./client/public/TicketDetails.png) |
+|Department page|Dashboard dark mode|
+| ![departmentPage](./client/public/DepartmentPage.png) | ![dashboardDarkMode](./client/public/Dashboard-DarkMode.png) |
+
 ## Getting Started
 
 ### Prerequisites
